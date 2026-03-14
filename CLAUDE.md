@@ -3,42 +3,40 @@
 Full social media platform for crypto degens. Inspired by https://github.com/BreadGiver/Shitter
 
 ## Project
-- **URL:** social.shitter.io
+- **URL:** social.shitter.io (separate subdomain deployment)
 - **Repo:** https://github.com/AgentOrange81/shitter-social
 - **Tech:** Next.js 16, TypeScript, Tailwind, shadcn/ui
-- **Status:** Next.js scaffold ready
+- **Status:** UI scaffold in progress
+- **Architecture:** Standalone app, separate from shitter.io and screener.shitter.io
 
 ---
 
-## Features
+## MVP Features (Phase 1-2)
 
-### Core Social
-- **Posts:** 280-char limit, threads, replies, reposts, quotes, likes, bookmarks
-- **Media:** Images, GIFs, videos (Cloudflare R2)
-- **Hashtags & @mentions:** Auto-detected and linked
-- **Timelines:** "For You" (algorithmic) + "Following" (chronological)
-- **Profiles:** Avatar, banner, bio, location, links, follower counts
-- **Follow/unfollow/block/mute/report**
-- **Search:** Users, posts, hashtags, memecoins
-- **DMs:** 1:1 and group messaging
+### Core Social (Priority)
+- **Posts:** 280-char limit, replies, likes
+- **Threads:** Reply chains
+- **Profiles:** Avatar, banner, bio, follower counts
+- **Timelines:** "For You" + "Following" tabs
+- **Hashtags & @mentions:** Auto-detected
 
 ### Auth (Wallet-based)
 - NextAuth v5 + Sign In With Solana (SIWS)
 - Supported wallets: Phantom, Solflare, Backpack
 - Use `@solana/wallet-adapter-react`
 
-### Real-time
-- Socket.io for notifications/chat
-- Live price updates (integrate with shit-screener later)
+### Later (Phase 3+)
+- Reposts, quotes, bookmarks
+- Media uploads (use vanity-api S3 or simple storage)
+- DMs
+- Search
+- Real-time notifications (Socket.io)
 
-### Memecoin Integration
-- Link to shitter.io launchpad
-- Show token prices in timeline
-- Share coin launches to feed
-
-### Streaming (Future)
-- LiveKit for live streams
-- Stream categories, chat, SOL tips
+### NOT Building (Out of Scope)
+- Memecoin launchpad (shitter.io)
+- Trading UI (screener.shitter.io)
+- LiveKit streaming
+- YouTube profile songs
 
 ---
 
