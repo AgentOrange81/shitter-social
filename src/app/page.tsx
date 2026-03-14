@@ -1,3 +1,5 @@
+"use client"
+
 import { PostCard } from "@/components/post/PostCard"
 import { ComposePost } from "@/components/post/ComposePost"
 import { ProfileCard } from "@/components/post/ProfileCard"
