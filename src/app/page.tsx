@@ -1,10 +1,30 @@
 "use client"
 
+import { useState } from "react"
 import { PostCard } from "@/components/post/PostCard"
 import { ComposePost } from "@/components/post/ComposePost"
 import { ProfileCard } from "@/components/post/ProfileCard"
 
-const mockPosts = [
+interface Post {
+  id: string
+  user: {
+    name: string
+    handle: string
+    avatar: string
+  }
+  content: string
+  image?: string
+  timestamp: string
+  stats: {
+    likes: number
+    replies: number
+    reposts: number
+  }
+  liked?: boolean
+  reposted?: boolean
+}
+
+const initialPosts: Post[] = [
   {
     id: "1",
     user: {
@@ -68,9 +88,57 @@ const mockPosts = [
 ]
 
 export default function Home() {
+  const [posts, setPosts] = useState<Post[]>(initialPosts)
+
   const handlePost = (content: string) => {
-    console.log("New post:", content)
-    // In a real app, this would call an API to create the post
+    const newPost: Post = {
+      id: Date.now().toString(),
+      user: {
+        name: "You",
+        handle: "yourhandle",
+        avatar: "/avatar.png",
+      },
+      content,
+      timestamp: "now",
+      stats: {
+        likes: 0,
+        replies: 0,
+        reposts: 0,
+      },
+    }
+    setPosts([newPost, ...posts])
+  }
+
+  const handleLike = (postId: string) => {
+    setPosts(posts.map(post => {
+      if (post.id === postId) {
+        return {
+          ...post,
+          liked: !post.liked,
+          stats: {
+            ...post.stats,
+            likes: post.liked ? post.stats.likes - 1 : post.stats.likes + 1
+          }
+        }
+      }
+      return post
+    }))
+  }
+
+  const handleRepost = (postId: string) => {
+    setPosts(posts.map(post => {
+      if (post.id === postId) {
+        return {
+          ...post,
+          reposted: !post.reposted,
+          stats: {
+            ...post.stats,
+            reposts: post.reposted ? post.stats.reposts - 1 : post.stats.reposts + 1
+          }
+        }
+      }
+      return post
+    }))
   }
 
   return (
@@ -81,8 +149,13 @@ export default function Home() {
         <ComposePost onPost={handlePost} />
 
         {/* Posts */}
-        {mockPosts.map((post) => (
-          <PostCard key={post.id} post={post} />
+        {posts.map((post) => (
+          <PostCard 
+            key={post.id} 
+            post={post} 
+            onLike={() => handleLike(post.id)}
+            onRepost={() => handleRepost(post.id)}
+          />
         ))}
       </div>
 

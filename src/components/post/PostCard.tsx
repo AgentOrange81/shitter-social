@@ -18,11 +18,19 @@ interface Post {
     replies: number
     reposts: number
   }
+  liked?: boolean
+  reposted?: boolean
 }
 
-export function PostCard({ post }: { post: Post }) {
+interface PostCardProps {
+  post: Post
+  onLike?: () => void
+  onRepost?: () => void
+}
+
+export function PostCard({ post, onLike, onRepost }: PostCardProps) {
   return (
-    <article className="flex gap-4 border-b border-shit-dark pb-4 hover:bg-shit/30 transition-colors cursor-pointer">
+    <article className="flex gap-4 border-b border-shit-dark pb-4 hover:bg-shit/30 transition-colors">
       <div className="flex-shrink-0">
         <div className="h-12 w-12 rounded-full bg-gold text-shit-darker flex items-center justify-center font-bold">
           {post.user.name.charAt(0)}
@@ -59,13 +67,29 @@ export function PostCard({ post }: { post: Post }) {
             <span className="text-sm">{post.stats.replies}</span>
           </Button>
 
-          <Button variant="ghost" size="sm" className="text-shit-light hover:text-green hover:bg-shit">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className={`hover:text-green hover:bg-shit ${post.reposted ? 'text-green' : 'text-shit-light'}`}
+            onClick={(e) => {
+              e.stopPropagation()
+              onRepost?.()
+            }}
+          >
             <Repeat2 className="h-4 w-4 mr-2" />
             <span className="text-sm">{post.stats.reposts}</span>
           </Button>
 
-          <Button variant="ghost" size="sm" className="text-shit-light hover:text-red hover:bg-shit">
-            <Heart className="h-4 w-4 mr-2" />
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className={`hover:text-red hover:bg-shit ${post.liked ? 'text-red fill-current' : 'text-shit-light'}`}
+            onClick={(e) => {
+              e.stopPropagation()
+              onLike?.()
+            }}
+          >
+            <Heart className={`h-4 w-4 mr-2 ${post.liked ? 'fill-current' : ''}`} />
             <span className="text-sm">{post.stats.likes}</span>
           </Button>
 
