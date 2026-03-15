@@ -3,8 +3,10 @@
 import { Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
+import { useWallet } from "@solana/wallet-adapter-react"
 import { PostCard } from "@/components/post/PostCard"
 import Link from "next/link"
+import { useToast } from "@/components/ui/toast"
 
 interface Post {
   id: string
@@ -21,6 +23,8 @@ interface Post {
     reposts: number
     replies: number
   }
+  liked?: boolean
+  reposted?: boolean
 }
 
 interface User {
@@ -77,6 +81,10 @@ function SearchContent() {
   const router = useRouter()
   const q = searchParams.get('q') || ''
   const type = searchParams.get('type') || 'all'
+  const { publicKey, connected } = useWallet()
+  const { showToast } = useToast()
+  
+  const walletAddress = publicKey?.toBase58()
   
   const [results, setResults] = useState<{
     posts: Post[]
@@ -126,6 +134,142 @@ function SearchContent() {
 
   const handleTypeChange = (newType: string) => {
     router.push(`/search?q=${encodeURIComponent(q)}&type=${newType}`)
+  }
+
+  // Handle like/unlike
+  const handleLike = async (postId: string) => {
+    if (!walletAddress) {
+      showToast("Connect your wallet to like posts", "info")
+      return
+    }
+
+    setResults((prev) => ({
+      ...prev,
+      posts: prev.posts.map((p) => {
+        if (p.id === postId) {
+          const isCurrentlyLiked = p.liked
+          return {
+            ...p,
+            liked: !isCurrentlyLiked,
+            _count: {
+              ...p._count,
+              likes: isCurrentlyLiked ? (p._count?.likes || 1) - 1 : (p._count?.likes || 0) + 1,
+            },
+          }
+        }
+        return p
+      }),
+    }))
+
+    try {
+      const res = await fetch(`/api/posts/${postId}/like`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: walletAddress }),
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        setResults((prev) => ({
+          ...prev,
+          posts: prev.posts.map((p) => {
+            if (p.id === postId) {
+              return {
+                ...p,
+                liked: data.liked,
+                _count: {
+                  ...p._count,
+                  likes: data.likeCount,
+                },
+              }
+            }
+            return p
+          }),
+        }))
+      }
+    } catch (err) {
+      console.error("Failed to toggle like:", err)
+    }
+  }
+
+  // Handle repost
+  const handleRepost = async (postId: string) => {
+    if (!walletAddress) {
+      showToast("Connect your wallet to repost", "info")
+      return
+    }
+
+    setResults((prev) => ({
+      ...prev,
+      posts: prev.posts.map((p) => {
+        if (p.id === postId) {
+          const isCurrentlyReposted = p.reposted
+          return {
+            ...p,
+            reposted: !isCurrentlyReposted,
+            _count: {
+              ...p._count,
+              reposts: isCurrentlyReposted ? (p._count?.reposts || 1) - 1 : (p._count?.reposts || 0) + 1,
+            },
+          }
+        }
+        return p
+      }),
+    }))
+
+    try {
+      const res = await fetch(`/api/posts/${postId}/repost`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: walletAddress }),
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        setResults((prev) => ({
+          ...prev,
+          posts: prev.posts.map((p) => {
+            if (p.id === postId) {
+              return {
+                ...p,
+                reposted: data.reposted,
+                _count: {
+                  ...p._count,
+                  reposts: data.repostCount,
+                },
+              }
+            }
+            return p
+          }),
+        }))
+      }
+    } catch (err) {
+      console.error("Failed to toggle repost:", err)
+    }
+  }
+
+  // Handle quote post
+  const handleQuote = async (postId: string, comment: string) => {
+    if (!walletAddress) {
+      showToast("Connect your wallet to quote post", "info")
+      return
+    }
+
+    try {
+      const res = await fetch(`/api/posts/${postId}/repost`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: walletAddress, comment }),
+      })
+
+      if (res.ok) {
+        showToast("Quote posted!", "success")
+        fetchResults()
+      }
+    } catch (err) {
+      console.error("Failed to quote post:", err)
+      showToast("Failed to quote post", "error")
+    }
   }
 
   const transformedPosts = results.posts.map(transformPost).filter(Boolean)
@@ -220,8 +364,18 @@ function SearchContent() {
             {activeTab === 'posts' && (
               <div className="space-y-4">
                 {transformedPosts.length > 0 ? (
-                  transformedPosts.map((post) => (
-                    <PostCard key={post!.id} post={post!} />
+                  transformedPosts.map((post) => post && (
+                    <PostCard
+                      key={post.id}
+                      post={{
+                        ...post,
+                        liked: results.posts.find(p => p.id === post.id)?.liked || false,
+                        reposted: results.posts.find(p => p.id === post.id)?.reposted || false,
+                      }}
+                      onLike={() => handleLike(post.id)}
+                      onRepost={() => handleRepost(post.id)}
+                      onQuote={(comment: string) => handleQuote(post.id, comment)}
+                    />
                   ))
                 ) : (
                   <p className="text-shit-light">No posts found</p>

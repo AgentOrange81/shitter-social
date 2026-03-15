@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { content, authorId } = body;
+    const { content, authorId, parentId } = body;
 
     if (!content || typeof content !== 'string') {
       return NextResponse.json({ error: 'Content is required' }, { status: 400 });
@@ -70,6 +70,14 @@ export async function POST(request: NextRequest) {
 
     if (!authorId) {
       return NextResponse.json({ error: 'Author ID is required' }, { status: 400 });
+    }
+
+    // Validate parentId if provided
+    if (parentId) {
+      const parentPost = await prisma.post.findUnique({ where: { id: parentId } });
+      if (!parentPost) {
+        return NextResponse.json({ error: 'Parent post not found' }, { status: 404 });
+      }
     }
 
     // Auto-create user if they don't exist (wallet address)
@@ -91,6 +99,7 @@ export async function POST(request: NextRequest) {
       data: {
         content: content.trim(),
         authorId: user.id,
+        parentId: parentId || null,
       },
       include: {
         author: {

@@ -117,6 +117,16 @@ export async function POST(
           followingId: userToFollow.id,
         },
       });
+
+      // Create follow notification
+      await prisma.notification.create({
+        data: {
+          type: 'follow',
+          userId: userToFollow.id,
+          fromUserId: followerUser.id,
+        },
+      });
+
       return NextResponse.json({ isFollowing: true });
     }
   } catch (error) {

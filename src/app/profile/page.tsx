@@ -11,6 +11,8 @@ interface UserProfile {
   displayName: string | null
   bio: string | null
   avatar: string | null
+  banner: string | null
+  postsCount?: number
 }
 
 export default function ProfilePage() {
@@ -23,6 +25,8 @@ export default function ProfilePage() {
   const [displayName, setDisplayName] = useState("")
   const [username, setUsername] = useState("")
   const [bio, setBio] = useState("")
+  const [avatar, setAvatar] = useState("")
+  const [banner, setBanner] = useState("")
 
   useEffect(() => {
     if (connected && publicKey) {
@@ -42,6 +46,8 @@ export default function ProfilePage() {
         setDisplayName(data.displayName || "")
         setUsername(data.username || "")
         setBio(data.bio || "")
+        setAvatar(data.avatar || "")
+        setBanner(data.banner || "")
       }
     } catch (err) {
       console.error("Failed to fetch profile:", err)
@@ -64,6 +70,8 @@ export default function ProfilePage() {
           displayName: displayName || null,
           username,
           bio: bio || null,
+          avatar: avatar || null,
+          banner: banner || null,
         }),
       })
       
@@ -152,6 +160,38 @@ export default function ProfilePage() {
               className="w-full bg-shit border border-shit-dark rounded px-3 py-2 text-cream placeholder-shit-light focus:outline-none focus:border-gold resize-none"
             />
             <p className="text-shit-light text-xs mt-1">{bio.length}/160</p>
+          </div>
+
+          <div>
+            <label className="block text-shit-light text-sm mb-1">Avatar URL</label>
+            <input
+              type="text"
+              value={avatar}
+              onChange={(e) => setAvatar(e.target.value)}
+              placeholder="https://example.com/avatar.jpg"
+              className="w-full bg-shit border border-shit-dark rounded px-3 py-2 text-cream placeholder-shit-light focus:outline-none focus:border-gold"
+            />
+            {avatar && (
+              <div className="mt-2">
+                <img src={avatar} alt="Avatar preview" className="h-16 w-16 rounded-full object-cover" />
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-shit-light text-sm mb-1">Banner URL</label>
+            <input
+              type="text"
+              value={banner}
+              onChange={(e) => setBanner(e.target.value)}
+              placeholder="https://example.com/banner.jpg"
+              className="w-full bg-shit border border-shit-dark rounded px-3 py-2 text-cream placeholder-shit-light focus:outline-none focus:border-gold"
+            />
+            {banner && (
+              <div className="mt-2">
+                <img src={banner} alt="Banner preview" className="h-16 w-full object-cover rounded" />
+              </div>
+            )}
           </div>
 
           {message && (

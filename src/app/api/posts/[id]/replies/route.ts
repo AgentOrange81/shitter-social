@@ -69,10 +69,15 @@ export async function POST(
     });
 
     if (!user) {
+      // Generate a unique username using wallet address + random suffix
+      const randomSuffix = Math.random().toString(36).substring(2, 6);
+      const baseUsername = authorId.replace(/[^a-zA-Z0-9]/g, '').toLowerCase().slice(0, 4);
+      const username = `user_${baseUsername}${randomSuffix}`;
+      
       user = await prisma.user.create({
         data: {
           walletAddress: authorId,
-          username: `user_${authorId.slice(0, 8)}`,
+          username,
           displayName: `User ${authorId.slice(0, 6)}...`,
         },
       });

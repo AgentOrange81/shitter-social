@@ -22,6 +22,11 @@ export async function GET(request: NextRequest) {
         bio: true,
         banner: true,
         createdAt: true,
+        _count: {
+          select: {
+            posts: true,
+          },
+        },
       },
     });
 
@@ -29,7 +34,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    return NextResponse.json(user);
+    return NextResponse.json({
+      ...user,
+      postsCount: user._count.posts,
+    });
   } catch (error) {
     console.error('Error fetching user:', error);
     return NextResponse.json({ error: 'Failed to fetch user' }, { status: 500 });
@@ -40,16 +48,20 @@ export async function GET(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { walletAddress, displayName, username, bio, avatar } = body;
+    const { walletAddress, displayName, username, bio, avatar, banner } = body;
 
     if (!walletAddress) {
       return NextResponse.json({ error: 'Wallet address required' }, { status: 400 });
     }
 
-    // Check if username is taken (if trying to change it)
+    // Check if username is taken (if trying to change it) - case insensitive
+    // Note: SQLite string comparisons are case-insensitive by default for ASCII
     if (username) {
       const existing = await prisma.user.findFirst({
-        where: { username, walletAddress: { not: walletAddress } },
+        where: { 
+          username: username, // SQLite is case-insensitive for ASCII by default
+          walletAddress: { not: walletAddress }
+        },
       });
       if (existing) {
         return NextResponse.json({ error: 'Username already taken' }, { status: 400 });
@@ -63,6 +75,7 @@ export async function PUT(request: NextRequest) {
         ...(username && { username }),
         ...(bio !== undefined && { bio }),
         ...(avatar !== undefined && { avatar }),
+        ...(banner !== undefined && { banner }),
       },
       select: {
         id: true,
@@ -70,6 +83,7 @@ export async function PUT(request: NextRequest) {
         username: true,
         displayName: true,
         avatar: true,
+        banner: true,
         bio: true,
       },
     });

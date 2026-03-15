@@ -1,14 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 
 // GET /api/notifications - Fetch user notifications
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
+    // Get user from wallet address in header
+    const walletAddress = request.headers.get('x-wallet-address');
     
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!walletAddress) {
+      return NextResponse.json({ error: 'Unauthorized: Wallet address required' }, { status: 401 });
+    }
+
+    // Look up user by wallet address
+    const user = await prisma.user.findUnique({
+      where: { walletAddress },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -18,7 +27,7 @@ export async function GET(request: NextRequest) {
 
     // Build where clause
     const where: Record<string, unknown> = {
-      userId: session.user.id,
+      userId: user.id,
     };
 
     if (unreadOnly) {
@@ -60,7 +69,7 @@ export async function GET(request: NextRequest) {
     // Get unread count
     const unreadCount = await prisma.notification.count({
       where: {
-        userId: session.user.id,
+        userId: user.id,
         read: false,
       },
     });
@@ -80,10 +89,20 @@ export async function GET(request: NextRequest) {
 // PUT /api/notifications - Mark notifications as read
 export async function PUT(request: NextRequest) {
   try {
-    const session = await auth();
+    // Get user from wallet address in header
+    const walletAddress = request.headers.get('x-wallet-address');
     
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!walletAddress) {
+      return NextResponse.json({ error: 'Unauthorized: Wallet address required' }, { status: 401 });
+    }
+
+    // Look up user by wallet address
+    const user = await prisma.user.findUnique({
+      where: { walletAddress },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     const body = await request.json();
@@ -93,7 +112,7 @@ export async function PUT(request: NextRequest) {
       // Mark all as read
       await prisma.notification.updateMany({
         where: {
-          userId: session.user.id,
+          userId: user.id,
           read: false,
         },
         data: {
@@ -105,7 +124,7 @@ export async function PUT(request: NextRequest) {
       await prisma.notification.updateMany({
         where: {
           id: { in: notificationIds },
-          userId: session.user.id,
+          userId: user.id,
         },
         data: {
           read: true,

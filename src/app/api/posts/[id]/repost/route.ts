@@ -8,10 +8,15 @@ export async function POST(
   try {
     const { id: postId } = await params;
     const body = await request.json();
-    const { userId } = body;
+    const { userId, comment } = body;
 
     if (!userId) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+    }
+
+    // Validate comment length if provided
+    if (comment && comment.length > 280) {
+      return NextResponse.json({ error: 'Comment must be 280 characters or less' }, { status: 400 });
     }
 
     // Auto-create user if they don't exist (wallet address)
@@ -60,11 +65,12 @@ export async function POST(
         repostCount,
       });
     } else {
-      // Create repost
+      // Create repost (quote post if comment provided)
       await prisma.repost.create({
         data: {
           userId: user.id,
           postId,
+          comment: comment?.trim() || null,
         },
       });
 
@@ -75,6 +81,7 @@ export async function POST(
       return NextResponse.json({
         reposted: true,
         repostCount,
+        isQuote: !!comment?.trim(),
       });
     }
   } catch (error) {

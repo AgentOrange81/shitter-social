@@ -11,14 +11,30 @@ export async function GET(request: NextRequest) {
     const cursor = searchParams.get('cursor');
 
     let userId: string | null = null;
+    let userDbId: string | null = null;
 
-    // If following type and wallet provided, get the user's ID
-    if (type === 'following' && walletAddress) {
-      const user = await prisma.user.findUnique({
+    // If wallet provided, get or create the user and get their DB ID
+    if (walletAddress) {
+      let user = await prisma.user.findUnique({
         where: { walletAddress },
         select: { id: true },
       });
-      userId = user?.id || null;
+      if (!user) {
+        user = await prisma.user.create({
+          data: {
+            walletAddress,
+            username: `user_${walletAddress.slice(0, 8)}`,
+            displayName: `User ${walletAddress.slice(0, 6)}...`,
+          },
+          select: { id: true },
+        });
+      }
+      userDbId = user.id;
+    }
+
+    // If following type and wallet provided, get the user's ID
+    if (type === 'following' && userDbId) {
+      userId = userDbId;
     }
 
     // Build where clause based on type
@@ -66,6 +82,10 @@ export async function GET(request: NextRequest) {
             replies: true,
           },
         },
+        likes: userDbId ? {
+          where: { userId: userDbId },
+          select: { id: true },
+        } : false,
       },
     });
 
@@ -73,8 +93,20 @@ export async function GET(request: NextRequest) {
     const data = hasMore ? posts.slice(0, -1) : posts;
     const nextCursor = hasMore ? data[data.length - 1]?.id : null;
 
+    // Map posts to include liked status
+    const postsWithLiked = data.map((post) => ({
+      ...post,
+      liked: post.likes && post.likes.length > 0,
+    }));
+
+    // Remove the likes array from response (it was just for checking)
+    postsWithLiked.forEach((post) => {
+      // @ts-expect-error - removing internal likes array
+      delete post.likes;
+    });
+
     return NextResponse.json({
-      posts: data,
+      posts: postsWithLiked,
       nextCursor,
       hasMore,
     });
