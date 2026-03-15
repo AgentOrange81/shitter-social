@@ -6,8 +6,9 @@ Full social media platform for crypto degens. Inspired by https://github.com/Bre
 - **URL:** social.shitter.io (separate subdomain deployment)
 - **Repo:** https://github.com/AgentOrange81/shitter-social
 - **Tech:** Next.js 16, TypeScript, Tailwind, shadcn/ui
-- **Status:** UI scaffold in progress
+- **Status:** DB + Prisma working (SQLite)
 - **Architecture:** Standalone app, separate from shitter.io and screener.shitter.io
+- **Dev URL:** http://localhost:3003
 
 ---
 
@@ -64,7 +65,14 @@ Full social media platform for crypto degens. Inspired by https://github.com/Bre
 
 ## Database
 
-Use PostgreSQL + Prisma ORM.
+SQLite + Prisma ORM (dev). Move to PostgreSQL when deployed.
+
+### Storage Layout
+```
+storage/
+├── db/dev.db      # SQLite database
+└── media/         # Uploaded images (future)
+```
 
 ### Models
 ```prisma
@@ -140,10 +148,14 @@ shitter-social/
 ## Environment Variables
 
 ```env
-DATABASE_URL=postgresql://...
-NEXTAUTH_SECRET=
-NEXT_PUBLIC_SOLANA_RPC=
-R2_*
+# Development (SQLite)
+DATABASE_URL="file:./storage/db/dev.db"
+
+# Production (PostgreSQL)
+# DATABASE_URL=postgresql://...
+# NEXTAUTH_SECRET=
+# NEXT_PUBLIC_SOLANA_RPC=
+# R2_*
 ```
 
 ---
@@ -180,4 +192,40 @@ class-variance-authority clsx tailwind-merge lucide-react
 - Use shadcn/ui for components
 
 ---
+
+## Current Status (2026-03-14)
+
+### ✅ Done
+- Project scaffolded (Next.js 16, TypeScript, Tailwind, shadcn/ui)
+- Prisma schema + SQLite DB connected
+- Dev server running on localhost:3003
+
+### 🚧 In Progress
+- **Auth:** NextAuth v5 + Sign In With Solana (SIWS) — ✅ DONE
+- _Nothing yet_ - just scaffolded
+
+### 📋 To Do (Priority Order)
+1. **Auth:** NextAuth v5 + Sign In With Solana (SIWS)
+2. **Posts:** Create, display, like
+3. **Profiles:** View, follow, edit
+4. **Timeline:** For You + Following feeds
+5. **Search:** Users/posts/hashtags
+6. **Notifications:** Real-time (Socket.io)
+7. **DMs:** 1:1 messaging
+8. **Media:** Cloudflare R2 uploads (Phase 2)
+
+---
+
+## Key Decisions
+
+| Decision | Rationale |
+|----------|-----------|
+| Wallet auth only | Degen UX - no email/password |
+| SQLite → PostgreSQL | Dev simplicity, prod scale |
+| Separate subdomain | Loose coupling |
+| Dark + gold theme | Shitter brand consistency |
+| 💩 verified badge | Meme branding |
+
+---
+
 *Updated 2026-03-14*

@@ -1,5 +1,7 @@
 "use client"
 
+import Link from "next/link"
+
 interface Profile {
   name: string
   handle: string
@@ -66,14 +68,14 @@ export function ProfileCard({ profile }: { profile: Profile }) {
         </div>
 
         <div className="flex gap-4 mt-3 text-sm">
-          <div className="flex items-center gap-1">
+          <Link href={`/${profile.handle}/followers?type=following`} className="hover:underline">
             <span className="font-bold text-cream">{profile.following}</span>
-            <span className="text-shit-light">Following</span>
-          </div>
-          <div className="flex items-center gap-1">
+            <span className="text-shit-light"> Following</span>
+          </Link>
+          <Link href={`/${profile.handle}/followers?type=followers`} className="hover:underline">
             <span className="font-bold text-cream">{profile.followers}</span>
-            <span className="text-shit-light">Followers</span>
-          </div>
+            <span className="text-shit-light"> Followers</span>
+          </Link>
         </div>
       </div>
     </div>

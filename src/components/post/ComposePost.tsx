@@ -5,10 +5,11 @@ import { Button } from "../ui/button"
 import { EmojiPicker } from "./emoji-picker"
 import { useWallet } from "@solana/wallet-adapter-react"
 
-export function ComposePost({ onPost }: { onPost: (content: string) => void }) {
+export function ComposePost({ onPost, placeholder }: { onPost: (content: string) => void; placeholder?: string }) {
   const [content, setContent] = useState("")
   const maxLength = 280
   const { connected } = useWallet()
+  const defaultPlaceholder = connected ? "What's happening in the crypto world?" : "Connect wallet to post"
 
   const handleSubmit = () => {
     if (content.trim()) {
@@ -31,7 +32,7 @@ export function ComposePost({ onPost }: { onPost: (content: string) => void }) {
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder={connected ? "What's happening in the crypto world?" : "Connect wallet to post"}
+          placeholder={placeholder || defaultPlaceholder}
           disabled={!connected}
           className="w-full bg-transparent text-cream text-base placeholder:text-shit-light focus:outline-none resize-none min-h-[80px] disabled:opacity-50"
           maxLength={maxLength}

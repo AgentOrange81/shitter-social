@@ -26,9 +26,11 @@ interface PostCardProps {
   post: Post
   onLike?: () => void
   onRepost?: () => void
+  onReply?: () => void
+  onViewReplies?: () => void
 }
 
-export function PostCard({ post, onLike, onRepost }: PostCardProps) {
+export function PostCard({ post, onLike, onRepost, onReply, onViewReplies }: PostCardProps) {
   return (
     <article className="flex gap-4 border-b border-shit-dark pb-4 hover:bg-shit/30 transition-colors">
       <div className="flex-shrink-0">
@@ -62,7 +64,15 @@ export function PostCard({ post, onLike, onRepost }: PostCardProps) {
         )}
 
         <div className="flex justify-between items-center max-w-md">
-          <Button variant="ghost" size="sm" className="text-shit-light hover:text-cream hover:bg-shit">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="text-shit-light hover:text-cream hover:bg-shit"
+            onClick={(e) => {
+              e.stopPropagation()
+              onViewReplies?.()
+            }}
+          >
             <MessageCircle className="h-4 w-4 mr-2" />
             <span className="text-sm">{post.stats.replies}</span>
           </Button>

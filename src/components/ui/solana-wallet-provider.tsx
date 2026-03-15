@@ -1,24 +1,29 @@
 "use client"
 
-import { WalletProvider } from "@solana/wallet-adapter-react"
+import { WalletProvider, ConnectionProvider } from "@solana/wallet-adapter-react"
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui"
 import { SolflareWalletAdapter } from "@solana/wallet-adapter-wallets"
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom"
-import { BackpackWalletAdapter } from "@solana/wallet-adapter-backpack"
-import { LedgerWalletAdapter } from "@solana/wallet-adapter-ledger"
+import { useMemo } from "react"
 
+// Use adapters that work better in-browser without redirect
 const wallets = [
   new PhantomWalletAdapter(),
   new SolflareWalletAdapter(),
-  new BackpackWalletAdapter(),
-  new LedgerWalletAdapter(),
 ]
 
 export function SolanaWalletProvider({ children }: { children: React.ReactNode }) {
+  const endpoint = useMemo(() => "https://api.mainnet-beta.solana.com", [])
+
   return (
-    <WalletProvider wallets={wallets} autoConnect={false}>
-      {children}
-    </WalletProvider>
+    <ConnectionProvider endpoint={endpoint}>
+      <WalletProvider wallets={wallets} autoConnect={false}>
+        <WalletModalProvider className="!overflow-visible">
+          {children}
+        </WalletModalProvider>
+      </WalletProvider>
+    </ConnectionProvider>
   )
 }
 
-export { useWallet } from "@solana/wallet-adapter-react"
+export { useWallet, useConnection } from "@solana/wallet-adapter-react"

@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import "@solana/wallet-adapter-react-ui/styles.css";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { SolanaWalletProvider } from "@/components/ui/solana-wallet-provider";
 import { ThemeProvider } from "@/components/ui/theme-provider";
+import { NextAuthProvider } from "@/components/next-auth-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,17 +34,19 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider attribute="class" defaultTheme="dark">
-          <SolanaWalletProvider>
-            <div className="flex min-h-screen bg-shit-darker">
-              <Sidebar />
-              <div className="flex-1 flex flex-col">
-                <Navbar />
-                <main className="flex-1 container mx-auto max-w-3xl p-4">
-                  {children}
-                </main>
+          <NextAuthProvider>
+            <SolanaWalletProvider>
+              <div className="flex min-h-screen bg-shit-darker">
+                <Sidebar />
+                <div className="flex-1 flex flex-col">
+                  <Navbar />
+                  <main className="flex-1 container mx-auto max-w-3xl p-4">
+                    {children}
+                  </main>
+                </div>
               </div>
-            </div>
-          </SolanaWalletProvider>
+            </SolanaWalletProvider>
+          </NextAuthProvider>
         </ThemeProvider>
       </body>
     </html>

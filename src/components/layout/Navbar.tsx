@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { Button } from "../ui/button"
 import { Menu, Search, Bell, User } from "lucide-react"
+import { WalletButton } from "../ui/WalletButton"
 
 export function Navbar() {
   return (
@@ -33,17 +34,14 @@ export function Navbar() {
             <span className="sr-only">Notifications</span>
           </Button>
 
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <User className="h-5 w-5" />
-            <span className="sr-only">User menu</span>
-          </Button>
+          <Link href="/profile">
+            <Button variant="ghost" size="icon" className="rounded-full">
+              <User className="h-5 w-5" />
+              <span className="sr-only">Profile</span>
+            </Button>
+          </Link>
 
-          <Button
-            variant="outline"
-            className="hidden md:flex border-gold text-gold hover:bg-gold hover:text-shit-darker"
-          >
-            Connect Wallet
-          </Button>
+          <WalletButton />
         </div>
       </div>
     </header>
