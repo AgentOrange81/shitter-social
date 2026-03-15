@@ -73,8 +73,9 @@ export function ComposePost({ onPost, placeholder }: { onPost: (content: string,
     let mediaType: string | undefined
     
     if (selectedFile) {
-      mediaUrl = await handleUpload()
-      if (mediaUrl) {
+      const uploadedUrl = await handleUpload()
+      if (uploadedUrl) {
+        mediaUrl = uploadedUrl
         mediaType = selectedFile.type
       }
     }
