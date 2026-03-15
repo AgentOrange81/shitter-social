@@ -7,6 +7,7 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { SolanaWalletProvider } from "@/components/ui/solana-wallet-provider";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { NextAuthProvider } from "@/components/next-auth-provider";
+import { ToastProvider } from "@/components/ui/toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,6 +37,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="dark">
           <NextAuthProvider>
             <SolanaWalletProvider>
+              <ToastProvider>
               <div className="flex min-h-screen bg-shit-darker">
                 <Sidebar />
                 <div className="flex-1 flex flex-col">
@@ -45,6 +47,7 @@ export default function RootLayout({
                   </main>
                 </div>
               </div>
+              </ToastProvider>
             </SolanaWalletProvider>
           </NextAuthProvider>
         </ThemeProvider>

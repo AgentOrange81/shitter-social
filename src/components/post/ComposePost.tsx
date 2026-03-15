@@ -18,7 +18,7 @@ export function ComposePost({ onPost, placeholder }: { onPost: (content: string)
     }
   }
 
-  const remaining = maxLength - content.length
+  const remaining = Math.max(0, maxLength - content.length)
 
   return (
     <div className="flex gap-4 border-b border-shit-dark pb-4 mb-4">

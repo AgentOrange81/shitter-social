@@ -88,6 +88,8 @@ export default function Home() {
   const [replyPosts, setReplyPosts] = useState<TransformedPost[]>([])
   const [showReplies, setShowReplies] = useState<string | null>(null)
   const [loadingReplies, setLoadingReplies] = useState(false)
+  const [followingUsers, setFollowingUsers] = useState<Record<string, boolean>>({})
+  const [followingLoading, setFollowingLoading] = useState<string | null>(null)
   const { publicKey } = useWallet()
 
   // Use wallet address as user ID
@@ -265,6 +267,29 @@ export default function Home() {
     }
   }
 
+  const handleFollow = async (username: string) => {
+    if (!currentUserId) {
+      alert('Please connect your wallet first')
+      return
+    }
+    setFollowingLoading(username)
+    try {
+      const res = await fetch(`/api/users/${username}/follow`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ follower: currentUserId }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setFollowingUsers(prev => ({ ...prev, [username]: data.isFollowing }))
+      }
+    } catch (err) {
+      console.error('Failed to follow:', err)
+    } finally {
+      setFollowingLoading(null)
+    }
+  }
+
   return (
     <div className="flex gap-6">
       {/* Main feed */}
@@ -381,8 +406,12 @@ export default function Home() {
                     <div className="text-shit-light text-sm">@{user.handle}</div>
                   </div>
                 </div>
-                <button className="bg-cream text-shit-darker text-sm font-bold px-3 py-1.5 rounded-full hover:bg-shit transition-colors">
-                  Follow
+                <button 
+                  onClick={() => handleFollow(user.handle)}
+                  disabled={followingLoading === user.handle}
+                  className="bg-cream text-shit-darker text-sm font-bold px-3 py-1.5 rounded-full hover:bg-shit transition-colors disabled:opacity-50"
+                >
+                  {followingLoading === user.handle ? '...' : followingUsers[user.handle] ? 'Following' : 'Follow'}
                 </button>
               </div>
             ))}

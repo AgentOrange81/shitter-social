@@ -5,7 +5,7 @@ import Link from "next/link"
 interface Profile {
   name: string
   handle: string
-  avatar: string
+  avatar?: string
   banner?: string
   bio?: string
   location?: string
@@ -13,6 +13,7 @@ interface Profile {
   joined: string
   followers: number
   following: number
+  postsCount?: number
 }
 
 export function ProfileCard({ profile }: { profile: Profile }) {
@@ -29,9 +30,17 @@ export function ProfileCard({ profile }: { profile: Profile }) {
       )}
       <div className="px-4 pb-4">
         <div className="relative">
-          <div className="h-24 w-24 rounded-full bg-gold text-shit-darker flex items-center justify-center font-bold text-3xl border-4 border-shit-darker -mt-16 mb-2">
-            {profile.name.charAt(0)}
-          </div>
+          {profile.avatar ? (
+            <img
+              src={profile.avatar}
+              alt={profile.name}
+              className="h-24 w-24 rounded-full border-4 border-shit-darker -mt-16 mb-2 object-cover"
+            />
+          ) : (
+            <div className="h-24 w-24 rounded-full bg-gold text-shit-darker flex items-center justify-center font-bold text-3xl border-4 border-shit-darker -mt-16 mb-2">
+              {profile.name.charAt(0)}
+            </div>
+          )}
         </div>
 
         <div className="flex justify-between items-start">
@@ -76,6 +85,12 @@ export function ProfileCard({ profile }: { profile: Profile }) {
             <span className="font-bold text-cream">{profile.followers}</span>
             <span className="text-shit-light"> Followers</span>
           </Link>
+          {profile.postsCount !== undefined && (
+            <div>
+              <span className="font-bold text-cream">{profile.postsCount}</span>
+              <span className="text-shit-light"> Posts</span>
+            </div>
+          )}
         </div>
       </div>
     </div>
