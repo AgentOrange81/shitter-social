@@ -6,7 +6,7 @@ Full social media platform for crypto degens. Inspired by https://github.com/Bre
 - **URL:** social.shitter.io (separate subdomain deployment)
 - **Repo:** https://github.com/AgentOrange81/shitter-social
 - **Tech:** Next.js 16, TypeScript, Tailwind, shadcn/ui
-- **Status:** DB + Prisma working (SQLite)
+- **Status:** DB + Prisma working (PostgreSQL on Neon)
 - **Architecture:** Standalone app, separate from shitter.io and screener.shitter.io
 - **Dev URL:** http://localhost:3003
 
@@ -28,7 +28,7 @@ Full social media platform for crypto degens. Inspired by https://github.com/Bre
 
 ### Later (Phase 3+)
 - Reposts, quotes, bookmarks
-- Media uploads (use vanity-api S3 or simple storage)
+- Media uploads (Cloudflare R2) ✅ DONE
 - DMs
 - Search
 - Real-time notifications (Socket.io)
@@ -65,29 +65,30 @@ Full social media platform for crypto degens. Inspired by https://github.com/Bre
 
 ## Database
 
-SQLite + Prisma ORM (dev). Move to PostgreSQL when deployed.
+PostgreSQL + Prisma ORM (Neon). Deployed.
 
 ### Storage Layout
 ```
 storage/
-├── db/dev.db      # SQLite database
-└── media/         # Uploaded images (future)
+├── db/dev.db      # SQLite (dev only)
+└── media/         # R2 uploads (future)
 ```
 
-### Models
-```prisma
-User
-Post
-Like
-Repost
-Bookmark
-Follow (follower/following)
-Notification
-Message
-Conversation
-ConversationParticipant
-Memecoin (linked to shitter tokens)
-```
+---
+
+## Media Storage (Cloudflare R2)
+
+### Environment Variables
+| Variable | Value |
+|----------|-------|
+| `R2_ACCESS_KEY_ID` | `edfb01241a67900b89514b1fc6590de2` |
+| `R2_SECRET_ACCESS_KEY` | `1d565a230da164fba07f74d9752e229bd1401844aac05d7bc2c966fb0ca2bfef` |
+| `R2_BUCKET_NAME` | `shitter` |
+| `R2_ACCOUNT_ID` | (from Cloudflare dashboard) |
+| `R2_PUBLIC_URL` | (R2 → Settings → Public access) |
+
+### Security TODO
+- [ ] Wire up R2 upload logic to media endpoint
 
 ---
 
@@ -148,14 +149,22 @@ shitter-social/
 ## Environment Variables
 
 ```env
-# Development (SQLite)
-DATABASE_URL="file:./storage/db/dev.db"
+# Production (PostgreSQL on Neon)
+DATABASE_URL="postgresql://neondb_owner:***@ep-ancient-forest-*.neon.tech/neondb?sslmode=require"
+NEXTAUTH_URL="https://social.shitter.io"
+NEXTAUTH_SECRET="***"
 
-# Production (PostgreSQL)
-# DATABASE_URL=postgresql://...
-# NEXTAUTH_SECRET=
-# NEXT_PUBLIC_SOLANA_RPC=
-# R2_*
+# Solana
+NEXT_PUBLIC_SOLANA_RPC="https://api.mainnet-beta.solana.com"
+
+# Cloudflare R2 (media uploads)
+R2_ACCOUNT_ID="7a77377538d91c2bdd4a639b4c9b59ea"
+R2_ENDPOINT="https://7a77377538d91c2bdd4a639b4c9b59ea.r2.cloudflarestorage.com"
+R2_BUCKET_NAME="shitter"
+R2_ACCESS_KEY_ID="edfb01241a67900b89514b1fc6590de2"
+R2_SECRET_ACCESS_KEY="1d565a230da164fba07f74d9752e229bd1401844aac05d7bc2c966fb0ca2bfef"
+R2_AUTH_TOKEN="CPr0j9k1GctGcsD9PeD80AKg-FtBZCj1HElBrBTv"
+R2_PUBLIC_URL="https://shitter.7a77377538d91c2bdd4a639b4c9b59ea.r2.cloudflarestorage.com"
 ```
 
 ---
@@ -193,26 +202,23 @@ class-variance-authority clsx tailwind-merge lucide-react
 
 ---
 
-## Current Status (2026-03-14)
+## Current Status (2026-03-15)
 
 ### ✅ Done
 - Project scaffolded (Next.js 16, TypeScript, Tailwind, shadcn/ui)
-- Prisma schema + SQLite DB connected
+- Prisma schema + PostgreSQL DB connected (Neon)
 - Dev server running on localhost:3003
+- **Media:** Cloudflare R2 uploads configured
 
 ### 🚧 In Progress
-- **Auth:** NextAuth v5 + Sign In With Solana (SIWS) — ✅ DONE
-- _Nothing yet_ - just scaffolded
+- Posts + Auth working
 
 ### 📋 To Do (Priority Order)
-1. **Auth:** NextAuth v5 + Sign In With Solana (SIWS)
-2. **Posts:** Create, display, like
-3. **Profiles:** View, follow, edit
-4. **Timeline:** For You + Following feeds
-5. **Search:** Users/posts/hashtags
-6. **Notifications:** Real-time (Socket.io)
-7. **DMs:** 1:1 messaging
-8. **Media:** Cloudflare R2 uploads (Phase 2)
+1. ~~**Media:** Cloudflare R2 uploads~~ (done)
+2. **Reposts, quotes, bookmarks**
+3. **DMs**
+4. **Search**
+5. **Notifications**
 
 ---
 
@@ -228,4 +234,4 @@ class-variance-authority clsx tailwind-merge lucide-react
 
 ---
 
-*Updated 2026-03-14*
+*Updated 2026-03-15*

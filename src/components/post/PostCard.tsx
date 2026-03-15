@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Heart, MessageCircle, Repeat2, Share2, X } from "lucide-react"
 import { Button } from "../ui/button"
 import { ContentWithLinks } from "./ContentWithLinks"
+import { formatRelativeTime } from "@/lib/utils"
 
 interface Post {
   id: string
@@ -47,6 +48,7 @@ interface PostCardProps {
 export function PostCard({ post, onLike, onRepost, onQuote, onReply, onViewReplies }: PostCardProps) {
   const [showQuoteModal, setShowQuoteModal] = useState(false)
   const [quoteComment, setQuoteComment] = useState("")
+  const [isLiking, setIsLiking] = useState(false)
 
   const handleRepostClick = () => {
     // If onQuote is provided, show the quote modal instead of simple repost
@@ -85,7 +87,7 @@ export function PostCard({ post, onLike, onRepost, onQuote, onReply, onViewRepli
               <span className="font-bold text-cream hover:underline">{post.user.name}</span>
               <span className="text-shit-light">@{post.user.handle}</span>
               <span className="text-shit-light text-xs">·</span>
-              <span className="text-shit-light text-sm">{post.timestamp}</span>
+              <span className="text-shit-light text-sm">{formatRelativeTime(post.timestamp)}</span>
             </div>
           </div>
 
@@ -160,13 +162,15 @@ export function PostCard({ post, onLike, onRepost, onQuote, onReply, onViewRepli
             <Button 
               variant="ghost" 
               size="sm" 
-              className={`hover:text-red hover:bg-shit ${post.liked ? 'text-red fill-current' : 'text-shit-light'}`}
+              className={`hover:text-red hover:bg-shit transition-transform active:scale-125 ${post.liked ? 'text-red' : 'text-shit-light'}`}
               onClick={(e) => {
                 e.stopPropagation()
+                setIsLiking(true)
                 onLike?.()
+                setTimeout(() => setIsLiking(false), 300)
               }}
             >
-              <Heart className={`h-4 w-4 mr-2 ${post.liked ? 'fill-current' : ''}`} />
+              <Heart className={`h-4 w-4 mr-2 transition-transform ${post.liked || isLiking ? 'fill-current scale-125' : ''}`} />
               <span className="text-sm">{post.stats.likes}</span>
             </Button>
 

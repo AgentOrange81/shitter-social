@@ -1,48 +1,74 @@
-# Shitter Social - Docker Setup
+# Shitter Social
 
-## Quick Start
+Full social media platform for crypto degens. Inspired by Shitter.
+
+## Tech Stack
+
+- **Framework:** Next.js 16, TypeScript, Tailwind, shadcn/ui
+- **Database:** PostgreSQL (Neon)
+- **Media Storage:** Cloudflare R2 (S3-compatible)
+- **Auth:** Wallet-based (Solana)
+
+## Setup
 
 ```bash
-cd shitter-social
-docker-compose up -d
+# Install dependencies
+npm install
+
+# Generate Prisma client
+npx prisma generate
+
+# Run dev server
+npm run dev
 ```
 
 ## Environment Variables
 
-Create a `.env` file or set these before running:
+Create a `.env` file (see `.env.example`):
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `POSTGRES_USER` | PostgreSQL username | `shitter` |
-| `POSTGRES_PASSWORD` | PostgreSQL password | `changeme` |
-| `POSTGRES_DB` | Database name | `shitter` |
-| `MINIO_ROOT_USER` | MinIO access key | `minioadmin` |
-| `MINIO_ROOT_PASSWORD` | MinIO secret key | `minioadmin` |
+```env
+# Database (Neon PostgreSQL)
+DATABASE_URL="postgresql://neondb_owner:***@ep-*.neon.tech/neondb?sslmode=require"
 
-## Services
+# NextAuth
+NEXTAUTH_URL="https://social.shitter.io"
+NEXTAUTH_SECRET="***"
 
-### PostgreSQL (port 5432)
-- Database for Shitter Social application data
-- Data persists in `postgres_data` volume
+# Solana
+NEXT_PUBLIC_SOLANA_RPC="https://api.mainnet-beta.solana.com"
 
-### MinIO (ports 9000, 9001)
-- S3-compatible object storage for media uploads
-- API: `http://localhost:9000`
-- Console: `http://localhost:9001` (credentials from env vars)
-- Data persists in `minio_data` volume
+# Cloudflare R2 (Media Storage)
+R2_ACCOUNT_ID="7a77377538d91c2bdd4a639b4c9b59ea"
+R2_ENDPOINT="https://7a77377538d91c2bdd4a639b4c9b59ea.r2.cloudflarestorage.com"
+R2_BUCKET_NAME="shitter"
+R2_ACCESS_KEY_ID="edfb01241a67900b89514b1fc6590de2"
+R2_SECRET_ACCESS_KEY="***"
+R2_PUBLIC_URL="https://shitter.7a77377538d91c2bdd4a639b4c9b59ea.r2.cloudflarestorage.com"
+```
 
-## Commands
+## Deployment (Vercel)
 
 ```bash
-# Start services
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop services
-docker-compose down
-
-# Stop and remove volumes (data loss!)
-docker-compose down -v
+# Deploy to Vercel
+vercel --prod
 ```
+
+Set environment variables in Vercel dashboard.
+
+## API Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/posts` | GET/POST | List/create posts |
+| `/api/posts/[id]` | GET/PUT/DELETE | Single post |
+| `/api/media` | POST | Get presigned upload URL |
+| `/api/users/[username]` | GET | User profile |
+
+## Media Upload Flow
+
+1. Client calls `/api/media` with `{ filename, contentType }`
+2. Server returns presigned PUT URL
+3. Client uploads directly to R2 using presigned URL
+4. Server returns public URL for storage
+
+Client-side helper: `src/lib/media.ts` (see `uploadImage()`)
