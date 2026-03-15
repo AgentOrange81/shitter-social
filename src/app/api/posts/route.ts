@@ -58,8 +58,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { content, authorId, parentId } = body;
+    const { content, authorId, parentId, mediaUrl, mediaType } = body;
 
+    // Validate content
     if (!content || typeof content !== 'string') {
       return NextResponse.json({ error: 'Content is required' }, { status: 400 });
     }
@@ -68,8 +69,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Content must be 280 characters or less' }, { status: 400 });
     }
 
+    // Validate authorId
     if (!authorId) {
       return NextResponse.json({ error: 'Author ID is required' }, { status: 400 });
+    }
+
+    // Validate media if provided
+    if (mediaUrl && typeof mediaUrl !== 'string') {
+      return NextResponse.json({ error: 'mediaUrl must be a valid URL' }, { status: 400 });
+    }
+
+    if (mediaType && typeof mediaType !== 'string') {
+      return NextResponse.json({ error: 'mediaType must be a valid string' }, { status: 400 });
     }
 
     // Validate parentId if provided
@@ -100,6 +111,14 @@ export async function POST(request: NextRequest) {
         content: content.trim(),
         authorId: user.id,
         parentId: parentId || null,
+        media: mediaUrl && mediaType ? {
+          create: {
+            url: mediaUrl,
+            type: mediaType,
+            key: mediaUrl.split('/').pop() || '',
+            size: 0, // Size would need to be tracked during upload
+          },
+        } : undefined,
       },
       include: {
         author: {
@@ -110,6 +129,7 @@ export async function POST(request: NextRequest) {
             avatar: true,
           },
         },
+        media: true,
         _count: {
           select: {
             likes: true,

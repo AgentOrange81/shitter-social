@@ -59,17 +59,30 @@ model Follow {
   @@unique([followerId, followingId])
 }
 
+model Media {
+  id        String   @id @default(cuid())
+  url       String
+  type      String   // image, video, etc
+  key       String   // R2 storage key
+  size      Int      // file size in bytes
+  createdAt DateTime @default(now())
+
+  postId  String?
+  post    Post?  @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+}
+
 model Post {
   id        String   @id @default(cuid())
   content   String
-  mediaUrl  String?
-  mediaType String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   authorId String
   author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
+  media    Media[]
   likes    Like[]
   reposts  Repost[]
   bookmarks Bookmark[]
