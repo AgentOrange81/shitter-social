@@ -54,15 +54,16 @@ export function WalletButton() {
     router.push("/login")
   }
 
-  if (status === "loading") {
+  // Only show loading briefly on initial mount
+  if (status === "loading" && !publicKey) {
     return (
-      <button className="border border-gold text-gold font-bold py-2 px-4 rounded-md">
-        Loading...
+      <button className="border border-gold text-gold font-bold py-2 px-4 rounded-md animate-pulse">
+        Connecting...
       </button>
     )
   }
 
-  if (!publicKey) {
+  if (!publicKey || status !== "authenticated") {
     return (
       <WalletMultiButton className="!bg-gold !text-shit-darker !font-bold !rounded-md !h-10 !px-4 hover:!bg-gold-light transition-colors" />
     )
