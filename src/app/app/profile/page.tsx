@@ -94,11 +94,11 @@ export default function ProfilePage() {
         {/* Avatar + Info */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 mb-6">
           <div className="flex items-center space-x-4">
-            <div className="w-20 h-20 bg-emerald-600 rounded-full flex items-center justify-center text-2xl font-bold">
-              {user?.username?.charAt(0).toUpperCase() || "U"}
+            <div className="w-20 h-20 bg-amber-800 rounded-full flex items-center justify-center text-2xl font-bold">
+              {user?.username?.charAt(0).toUpperCase() || user?.displayName?.charAt(0).toUpperCase() || session.user?.name?.charAt(0).toUpperCase() || "U"}
             </div>
             <div>
-              <h2 className="text-xl font-bold">{user?.username || session.user?.name || "User"}</h2>
+              <h2 className="text-xl font-bold">{user?.username || user?.displayName || session.user?.name || "User"}</h2>
               <p className="text-zinc-400 text-sm">
                 {publicKey ? `${publicKey.toString().slice(0, 6)}...${publicKey.toString().slice(-4)}` : "Logged in"}
               </p>

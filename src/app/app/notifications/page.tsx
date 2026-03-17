@@ -104,7 +104,7 @@ export default function NotificationsPage() {
                 }`}
               >
                 <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
+                  <div className="w-10 h-10 bg-amber-800 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
                     {notification.type === "like" && "❤️"}
                     {notification.type === "repost" && "🔄"}
                     {notification.type === "follow" && "👤"}
@@ -113,7 +113,7 @@ export default function NotificationsPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-2 mb-1">
                       <span className="font-bold text-white">
-                        {notification.fromUser?.username || "Someone"}
+                        {notification.fromUser?.username || notification.fromUser?.displayName || "Someone"}
                       </span>
                       <span className="text-zinc-500 text-sm">
                         {new Date(notification.createdAt).toLocaleDateString()}
@@ -125,7 +125,7 @@ export default function NotificationsPage() {
                       {notification.type === "follow" && "started following you"}
                       {notification.type === "reply" && "replied to your post"}
                     </p>
-                    {notification.post && (
+                    {notification.post?.content && (
                       <p className="text-zinc-400 text-sm mt-2 line-clamp-2">
                         {notification.post.content}
                       </p>
