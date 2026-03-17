@@ -51,31 +51,31 @@ export default function ProfilePage() {
   // Guest browsing - show public view without wallet connection
   if (!session) {
     return (
-      <div className="min-h-screen bg-zinc-950 text-white">
+      <div className="min-h-screen bg-shit-darker">
         {/* Header */}
-        <div className="bg-zinc-900 border-b border-zinc-800">
+        <div className="bg-shit-brown/10 border-b border-shit-brown/30">
           <div className="max-w-4xl mx-auto px-4 py-4">
-            <h1 className="text-2xl font-bold">Profile</h1>
+            <h1 className="text-2xl font-bold text-cream">Profile</h1>
           </div>
         </div>
 
         {/* Guest CTA */}
         <div className="max-w-4xl mx-auto px-4 py-8">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
-            <h2 className="text-xl font-bold mb-4">Connect wallet to edit</h2>
-            <p className="text-zinc-400 mb-6">
+          <div className="bg-shit-brown/20 border border-shit-brown/30 rounded-xl p-8 text-center shadow-lifted">
+            <h2 className="text-xl font-bold mb-4 text-cream">Connect wallet to edit</h2>
+            <p className="text-shit-medium mb-6">
               Sign in to view your profile and access full features
             </p>
             <div className="flex gap-4 justify-center">
               <button
                 onClick={() => router.push("/login")}
-                className="px-6 py-3 bg-emerald-600 hover:bg-amber-800 text-white font-bold rounded-xl"
+                className="px-6 py-3 bg-glass hover:bg-gold text-shit-darker font-bold rounded-xl transition-all shadow-glow"
               >
                 Log In
               </button>
               <button
                 onClick={() => router.push("/")}
-                className="px-6 py-3 bg-zinc-700 hover:bg-zinc-600 text-white font-bold rounded-xl"
+                className="px-6 py-3 bg-shit-brown/30 hover:bg-shit-brown/50 text-cream font-bold rounded-xl transition-all"
               >
                 Browse Posts
               </button>
@@ -88,10 +88,10 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-800 mx-auto mb-4"></div>
-          <p className="text-zinc-400">Loading profile...</p>
+      <div className="min-h-screen bg-shit-darker flex items-center justify-center">
+        <div className="text-center animate-fade-in-up">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-glass mx-auto mb-4"></div>
+          <p className="text-cream">Loading profile...</p>
         </div>
       </div>
     );
