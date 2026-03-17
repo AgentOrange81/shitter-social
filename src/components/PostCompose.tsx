@@ -69,7 +69,7 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
     setError(null);
 
     try {
-      let mediaId = null;
+      let mediaUrl: string | undefined = undefined;
 
       // Upload image if attached
       if (imageFile) {
@@ -104,7 +104,7 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
           throw new Error("Failed to upload image");
         }
 
-        mediaId = mediaData.key;
+        mediaUrl = mediaData.publicUrl;
         setUploading(false);
       }
 
@@ -117,7 +117,7 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
         body: JSON.stringify({
           content: content.trim(),
           authorId: publicKey?.toString() || "",
-          mediaUrl: mediaId ? `https://shitter.7a77377538d91c2bdd4a639b4c9b59ea.r2.cloudflarestorage.com/${mediaId}` : undefined,
+          mediaUrl: mediaUrl,
           mediaType: imageFile?.type,
         }),
       });
