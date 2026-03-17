@@ -39,46 +39,46 @@ export default function HomeFeedPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-zinc-950 text-white">
-        <div className="bg-zinc-900 border-b border-zinc-800">
+      <div className="min-h-screen bg-shit-darker">
+        <div className="bg-shit-brown/10 border-b border-shit-brown/30">
           <div className="max-w-2xl mx-auto px-4 py-4">
             <h1 className="text-2xl font-bold">
-              <span className="text-amber-800">SHIT</span>TER
+              <span className="text-glass">SHIT</span>TER
             </h1>
           </div>
         </div>
         <div className="flex items-center justify-center py-32">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-800"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-glass"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white">
+    <div className="min-h-screen bg-shit-darker">
       {/* Header */}
-      <div className="bg-zinc-900 border-b border-zinc-800 sticky top-0">
+      <div className="bg-shit-brown/10 border-b border-shit-brown/30 sticky top-0 shadow-glow">
         <div className="max-w-2xl mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold">
-            <span className="text-amber-800">SHIT</span>TER
+          <h1 className="text-2xl font-bold text-cream">
+            <span className="text-glass">SHIT</span>TER
           </h1>
         </div>
       </div>
 
       {/* Navigation */}
-      <div className="bg-zinc-900/50 border-b border-zinc-800">
+      <div className="bg-shit-brown/5 border-b border-shit-brown/30">
         <div className="max-w-2xl mx-auto px-4 py-2">
           <nav className="flex space-x-6 text-sm">
-            <Link href="/app/explore" className="text-amber-800 font-medium">Explore</Link>
+            <Link href="/app/explore" className="text-glass font-medium">Explore</Link>
             {connected ? (
               <>
-                <Link href="/app/notifications" className="text-zinc-400 hover:text-white">Notifications</Link>
-                <Link href="/app/messages" className="text-zinc-400 hover:text-white">Messages</Link>
-                <Link href="/app/bookmarks" className="text-zinc-400 hover:text-white">Bookmarks</Link>
-                <Link href="/app/profile" className="text-zinc-400 hover:text-white">Profile</Link>
+                <Link href="/app/notifications" className="text-shit-medium hover:text-cream transition-colors">Notifications</Link>
+                <Link href="/app/messages" className="text-shit-medium hover:text-cream transition-colors">Messages</Link>
+                <Link href="/app/bookmarks" className="text-shit-medium hover:text-cream transition-colors">Bookmarks</Link>
+                <Link href="/app/profile" className="text-shit-medium hover:text-cream transition-colors">Profile</Link>
               </>
             ) : (
-              <Link href="/login" className="text-zinc-400 hover:text-white">Log In</Link>
+              <Link href="/login" className="text-shit-medium hover:text-cream transition-colors">Log In</Link>
             )}
           </nav>
         </div>
