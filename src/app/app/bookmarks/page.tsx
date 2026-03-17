@@ -122,23 +122,23 @@ export default function BookmarksPage() {
                 className="block p-4 hover:bg-zinc-900 transition-colors"
               >
                 <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 bg-amber-800 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
-                    {bookmark.post.author?.username?.charAt(0).toUpperCase() || bookmark.post.author?.displayName?.charAt(0).toUpperCase() || "A"}
+                  <div className="w-10 h-10 bg-glass rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 text-shit-darker">
+                    {bookmark.post.authorUsername?.charAt(0).toUpperCase() || "A"}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-2 mb-1">
-                      <span className="font-bold text-white">
-                        {bookmark.post.author?.username || bookmark.post.author?.displayName || "Anonymous"}
+                      <span className="font-bold text-cream">
+                        {bookmark.post.authorUsername || "Anonymous"}
                       </span>
                       <span className="text-zinc-500 text-sm">
                         {new Date(bookmark.createdAt).toLocaleDateString()}
                       </span>
                     </div>
-                    <p className="text-white whitespace-pre-wrap">{bookmark.post.content}</p>
-                    <div className="flex items-center space-x-6 mt-3 text-zinc-500 text-sm">
-                      <span>💬 {bookmark.post._count?.replies ?? 0}</span>
-                      <span>🔄 {bookmark.post._count?.reposts ?? 0}</span>
-                      <span>❤️ {bookmark.post._count?.likes ?? 0}</span>
+                    <p className="text-cream whitespace-pre-wrap">{bookmark.post.content}</p>
+                    <div className="flex items-center space-x-6 mt-3 text-shit-medium text-sm">
+                      <span>💬 {bookmark.post.replies ?? 0}</span>
+                      <span>🔄 {bookmark.post.reposts ?? 0}</span>
+                      <span>❤️ {bookmark.post.likes ?? 0}</span>
                     </div>
                   </div>
                 </div>

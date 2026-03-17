@@ -165,7 +165,7 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
       toast({
         title: "Error",
         description: err.message || "Failed to create post",
-        variant: "error",
+        type: "error",
       });
       setError(err.message || "Failed to create post");
     } finally {

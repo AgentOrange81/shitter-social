@@ -37,7 +37,7 @@ export async function POST(
     // Check if already reposted
     const existingRepost = await prisma.repost.findFirst({
       where: {
-        userId: user.id,
+        userId: userId,
         postId,
       },
     });
@@ -60,7 +60,7 @@ export async function POST(
       // Create repost (quote post if comment provided)
       await prisma.repost.create({
         data: {
-          userId: user.id,
+          userId: userId,
           postId,
           comment: comment?.trim() || null,
         },

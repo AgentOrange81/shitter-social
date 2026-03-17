@@ -125,21 +125,21 @@ export default function MessagesPage() {
                 className="block p-4 hover:bg-zinc-900 transition-colors"
               >
                 <div className="flex items-start space-x-3">
-                  <div className="w-12 h-12 bg-amber-800 rounded-full flex items-center justify-center text-lg font-bold flex-shrink-0">
-                    {conversation.otherUser?.username?.charAt(0).toUpperCase() || conversation.otherUser?.displayName?.charAt(0).toUpperCase() || "U"}
+                  <div className="w-12 h-12 bg-glass rounded-full flex items-center justify-center text-lg font-bold flex-shrink-0 text-shit-darker">
+                    {conversation.participant.username?.charAt(0).toUpperCase() || "U"}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="font-bold text-white">
-                        {conversation.otherUser?.username || conversation.otherUser?.displayName || "User"}
+                      <span className="font-bold text-cream">
+                        {conversation.participant.username || "User"}
                       </span>
-                      <span className="text-zinc-500 text-xs">
+                      <span className="text-shit-medium text-xs">
                         {new Date(conversation.updatedAt).toLocaleDateString()}
                       </span>
                     </div>
                     {conversation.lastMessage && (
                       <p className={`text-sm ${
-                        conversation.lastMessage.read ? "text-zinc-400" : "text-white font-medium"
+                        conversation.lastMessage.read ? "text-shit-medium" : "text-cream font-medium"
                       }`}>
                         {conversation.lastMessage.content}
                       </p>

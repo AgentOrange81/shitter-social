@@ -128,21 +128,21 @@ export default function NotificationsPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-2 mb-1">
-                      <span className="font-bold text-white">
-                        {notification.fromUser?.username || notification.fromUser?.displayName || "Someone"}
+                      <span className="font-bold text-cream">
+                        {notification.fromUser?.username || "Someone"}
                       </span>
-                      <span className="text-zinc-500 text-sm">
+                      <span className="text-shit-medium text-sm">
                         {new Date(notification.createdAt).toLocaleDateString()}
                       </span>
                     </div>
-                    <p className="text-white">
+                    <p className="text-cream">
                       {notification.type === "like" && "liked your post"}
                       {notification.type === "repost" && "reposted your post"}
                       {notification.type === "follow" && "started following you"}
                       {notification.type === "reply" && "replied to your post"}
                     </p>
                     {notification.post?.content && (
-                      <p className="text-zinc-400 text-sm mt-2 line-clamp-2">
+                      <p className="text-shit-medium text-sm mt-2 line-clamp-2">
                         {notification.post.content}
                       </p>
                     )}
