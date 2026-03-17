@@ -31,18 +31,39 @@ export default function ProfilePage() {
     }
   }, [session, publicKey]);
 
-  if (!connected) {
+  // Guest browsing - show public view without wallet connection
+  if (!session) {
     return (
-      <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Connect Wallet</h1>
-          <p className="text-zinc-400 mb-4">Please connect your Solana wallet to view your profile</p>
-          <button
-            onClick={() => router.push("/")}
-            className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl"
-          >
-            Go Home
-          </button>
+      <div className="min-h-screen bg-zinc-950 text-white">
+        {/* Header */}
+        <div className="bg-zinc-900 border-b border-zinc-800">
+          <div className="max-w-4xl mx-auto px-4 py-4">
+            <h1 className="text-2xl font-bold">Profile</h1>
+          </div>
+        </div>
+
+        {/* Guest CTA */}
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+            <h2 className="text-xl font-bold mb-4">Connect wallet to edit</h2>
+            <p className="text-zinc-400 mb-6">
+              Sign in to view your profile and access full features
+            </p>
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={() => router.push("/login")}
+                className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl"
+              >
+                Log In
+              </button>
+              <button
+                onClick={() => router.push("/")}
+                className="px-6 py-3 bg-zinc-700 hover:bg-zinc-600 text-white font-bold rounded-xl"
+              >
+                Browse Posts
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -74,12 +95,12 @@ export default function ProfilePage() {
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 mb-6">
           <div className="flex items-center space-x-4">
             <div className="w-20 h-20 bg-emerald-600 rounded-full flex items-center justify-center text-2xl font-bold">
-              {user?.username?.charAt(0).toUpperCase() || publicKey?.toString().slice(0, 2)}
+              {user?.username?.charAt(0).toUpperCase() || "U"}
             </div>
             <div>
-              <h2 className="text-xl font-bold">{user?.username || "Anonymous"}</h2>
+              <h2 className="text-xl font-bold">{user?.username || session.user?.name || "User"}</h2>
               <p className="text-zinc-400 text-sm">
-                {publicKey?.toString().slice(0, 6)}...{publicKey?.toString().slice(-4)}
+                {publicKey ? `${publicKey.toString().slice(0, 6)}...${publicKey.toString().slice(-4)}` : "Logged in"}
               </p>
               {user?.createdAt && (
                 <p className="text-zinc-500 text-xs mt-1">
@@ -105,6 +126,19 @@ export default function ProfilePage() {
             <div className="text-zinc-400 text-sm">Following</div>
           </div>
         </div>
+
+        {/* Wallet connection CTA for users without connected wallet */}
+        {!connected && (
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 mb-6 text-center">
+            <p className="text-zinc-400 mb-4">Connect your wallet to enable full profile features</p>
+            <button
+              onClick={() => router.push("/")}
+              className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl"
+            >
+              Connect Wallet
+            </button>
+          </div>
+        )}
 
         {/* Empty State */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">

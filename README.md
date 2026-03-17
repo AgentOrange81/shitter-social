@@ -5,7 +5,7 @@ Full social media platform for crypto degens. Inspired by Shitter.
 ## Tech Stack
 
 - **Framework:** Next.js 16, TypeScript, Tailwind, shadcn/ui
-- **Database:** PostgreSQL (Neon)
+- **Database:** PostgreSQL (Neon) — shared with shit-launcher (token registry)
 - **Media Storage:** Cloudflare R2 (S3-compatible)
 - **Auth:** Wallet-based (Solana)
 

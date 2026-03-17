@@ -1,10 +1,13 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { prisma } from "./db"
+import bcrypt from "bcryptjs"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
+    // Wallet-based authentication
     Credentials({
+      id: "wallet",
       name: "Solana Wallet",
       credentials: {
         walletAddress: { label: "Wallet Address", type: "text" },
@@ -32,6 +35,46 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               displayName: walletAddress.slice(0, 6) + "..." + walletAddress.slice(-4),
             },
           })
+        }
+
+        return {
+          id: user.id,
+          name: user.displayName || user.username,
+          email: user.walletAddress,
+          image: user.avatar,
+        }
+      },
+    }),
+    // Username/password authentication
+    Credentials({
+      id: "credentials",
+      name: "Username/Password",
+      credentials: {
+        username: { label: "Username", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.username || !credentials?.password) {
+          return null
+        }
+
+        const username = credentials.username as string
+        const password = credentials.password as string
+
+        // Find user by username
+        const user = await prisma.user.findUnique({
+          where: { username },
+        })
+
+        if (!user || !user.passwordHash) {
+          return null
+        }
+
+        // Verify password
+        const isValid = await bcrypt.compare(password, user.passwordHash)
+
+        if (!isValid) {
+          return null
         }
 
         return {
