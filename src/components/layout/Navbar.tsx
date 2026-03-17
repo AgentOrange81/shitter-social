@@ -3,7 +3,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Search, Bell, User, Menu } from "lucide-react"
-import { WalletButton } from "@/components/ui/WalletButton"
 import { Input } from "@/components/ui/input"
 
 interface NavbarProps {
@@ -43,8 +42,6 @@ export function Navbar({ onMenuClick }: NavbarProps) {
               <User className="h-5 w-5" />
             </Button>
           </Link>
-
-          <WalletButton />
         </div>
       </div>
     </header>
