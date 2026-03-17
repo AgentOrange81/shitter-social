@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useToast } from "@/components/ui/toast";
 
 interface Post {
   id: string;
@@ -26,21 +27,32 @@ interface Post {
 export default function HomeFeedPage() {
   const { connected } = useWallet();
   const router = useRouter();
+  const { toast } = useToast();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/posts/feed")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch feed");
+        return res.json();
+      })
       .then((data) => {
         setPosts(data.posts || []);
         setLoading(false);
       })
       .catch((err) => {
         console.error("Failed to fetch posts:", err);
+        toast({
+          title: "Feed Error",
+          description: "Failed to load posts. Try refreshing.",
+          variant: "error",
+        });
+        setError(err.message);
         setLoading(false);
       });
-  }, []);
+  }, [toast]);
 
   if (loading) {
     return (
@@ -65,7 +77,19 @@ export default function HomeFeedPage() {
 
       {/* Content */}
       <div className="max-w-2xl mx-auto">
-        {posts.length === 0 ? (
+        {error ? (
+          <div className="p-8 text-center">
+            <div className="text-6xl mb-4">💥</div>
+            <h2 className="text-xl font-bold mb-2">Failed to Load Feed</h2>
+            <p className="text-zinc-400 mb-6">{error}</p>
+            <button
+              onClick={() => router.refresh()}
+              className="px-6 py-3 bg-amber-700 hover:bg-amber-600 text-white font-bold rounded-xl"
+            >
+              Refresh
+            </button>
+          </div>
+        ) : posts.length === 0 ? (
           <div className="p-8 text-center">
             <div className="text-6xl mb-4">🐸</div>
             <h2 className="text-xl font-bold mb-2">No Posts Yet</h2>

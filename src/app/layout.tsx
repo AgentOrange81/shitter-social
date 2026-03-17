@@ -8,6 +8,7 @@ import { SolanaWalletProvider } from "@/components/ui/solana-wallet-provider";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { NextAuthProvider } from "@/components/next-auth-provider";
 import { ToastProvider } from "@/components/ui/toast";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,15 +39,17 @@ export default function RootLayout({
           <NextAuthProvider>
             <SolanaWalletProvider>
               <ToastProvider>
-              <div className="flex min-h-screen bg-shit-darker">
-                <Sidebar />
-                <div className="flex-1 flex flex-col">
-                  <Navbar />
-                  <main className="flex-1 container mx-auto max-w-3xl p-4">
-                    {children}
-                  </main>
-                </div>
-              </div>
+                <ErrorBoundary>
+                  <div className="flex min-h-screen bg-shit-darker">
+                    <Sidebar />
+                    <div className="flex-1 flex flex-col">
+                      <Navbar />
+                      <main className="flex-1 container mx-auto max-w-3xl p-4">
+                        {children}
+                      </main>
+                    </div>
+                  </div>
+                </ErrorBoundary>
               </ToastProvider>
             </SolanaWalletProvider>
           </NextAuthProvider>

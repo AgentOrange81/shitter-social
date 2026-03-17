@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useToast } from "@/components/ui/toast";
 
 interface PostComposeProps {
   onSuccess?: () => void;
@@ -15,6 +16,7 @@ interface PostComposeProps {
 export default function PostCompose({ onSuccess, onCancel, placeholder = "What's on your mind?", autoFocus = false }: PostComposeProps) {
   const { connected, publicKey } = useWallet();
   const router = useRouter();
+  const { toast } = useToast();
   const [content, setContent] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -88,6 +90,11 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
         const mediaData = await mediaRes.json();
 
         if (!mediaData.uploadUrl) {
+          toast({
+            title: "Upload Failed",
+            description: "Failed to get upload URL",
+            type: "error",
+          });
           throw new Error("Failed to get upload URL");
         }
 
@@ -101,6 +108,11 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
         });
 
         if (!uploadRes.ok) {
+          toast({
+            title: "Upload Failed",
+            description: "Failed to upload image",
+            type: "error",
+          });
           throw new Error("Failed to upload image");
         }
 
@@ -125,10 +137,20 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
       const postData = await postRes.json();
 
       if (!postRes.ok) {
+        toast({
+          title: "Post Failed",
+          description: postData.error || "Failed to create post",
+          type: "error",
+        });
         throw new Error(postData.error || "Failed to create post");
       }
 
       // Success
+      toast({
+        title: "Post Created",
+        description: "Your post is live!",
+        type: "success",
+      });
       setContent("");
       setImageFile(null);
       setImagePreview(null);
@@ -140,6 +162,11 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
       }
     } catch (err: any) {
       console.error("Post error:", err);
+      toast({
+        title: "Error",
+        description: err.message || "Failed to create post",
+        variant: "error",
+      });
       setError(err.message || "Failed to create post");
     } finally {
       setSubmitting(false);
