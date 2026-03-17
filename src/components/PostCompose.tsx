@@ -175,11 +175,11 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
 
   if (!connected) {
     return (
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-        <p className="text-zinc-400 mb-4">Connect your wallet to post</p>
+      <div className="bg-shit-brown/20 border border-shit-brown/30 rounded-xl p-6 shadow-lifted">
+        <p className="text-cream/70 mb-4">Connect your wallet to post</p>
         <button
           onClick={() => router.push("/login")}
-          className="px-6 py-3 bg-amber-700 hover:bg-amber-600 text-white font-bold rounded-xl"
+          className="px-6 py-3 bg-glass hover:bg-gold text-shit-darker font-bold rounded-xl transition-all shadow-glow"
         >
           Connect Wallet
         </button>
@@ -188,7 +188,7 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
   }
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+    <div className="bg-shit-brown/10 border border-shit-brown/30 rounded-xl p-4 shadow-lifted">
       {/* Text Area */}
       <textarea
         value={content}
@@ -197,18 +197,18 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
         autoFocus={autoFocus}
         maxLength={MAX_CHARS}
         rows={3}
-        className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-700 resize-none"
+        className="w-full bg-shit-brown/5 border border-shit-brown/30 rounded-lg p-3 text-cream placeholder-shit-medium focus:outline-none focus:border-glass focus:ring-1 focus:ring-glass resize-none transition-all"
       />
 
       {/* Character Counter */}
       <div className="flex items-center justify-between mt-2">
-        <span className={`text-sm ${content.length > MAX_CHARS ? "text-red-400" : "text-zinc-500"}`}>
+        <span className={`text-sm ${content.length > MAX_CHARS ? "text-red-400" : "text-shit-medium"}`}>
           {content.length}/{MAX_CHARS}
         </span>
 
         {/* Image Upload */}
         <div className="flex items-center space-x-2">
-          <label className="cursor-pointer text-zinc-500 hover:text-amber-700 transition-colors">
+          <label className="cursor-pointer text-shit-medium hover:text-glass transition-colors">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012 2l1.586 1.586m-6 0l-4-4m0 0l4-4m-4 4h12" />
             </svg>
@@ -230,11 +230,11 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
             alt="Preview"
             width={200}
             height={150}
-            className="rounded-lg max-h-40 object-cover"
+            className="rounded-lg max-h-40 object-cover shadow-lifted"
           />
           <button
             onClick={removeImage}
-            className="absolute top-2 right-2 bg-zinc-900/80 text-white rounded-full p-1 hover:bg-zinc-800"
+            className="absolute top-2 right-2 bg-shit-brown/80 text-cream rounded-full p-1 hover:bg-glass hover:text-shit-darker transition-all"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -253,7 +253,7 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
         {onCancel && (
           <button
             onClick={onCancel}
-            className="px-4 py-2 text-zinc-400 hover:text-white transition-colors"
+            className="px-4 py-2 text-shit-medium hover:text-cream transition-colors"
           >
             Cancel
           </button>
@@ -261,7 +261,7 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
         <button
           onClick={handleSubmit}
           disabled={!content.trim() || submitting || uploading || content.length > MAX_CHARS}
-          className="px-6 py-2 bg-amber-700 hover:bg-amber-600 disabled:bg-zinc-700 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-colors"
+          className="px-6 py-2 bg-glass hover:bg-gold disabled:bg-shit-brown/30 disabled:cursor-not-allowed text-shit-darker font-bold rounded-xl transition-all shadow-glow disabled:shadow-none"
         >
           {submitting ? "Posting..." : uploading ? "Uploading..." : "Post"}
         </button>

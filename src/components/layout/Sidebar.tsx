@@ -59,8 +59,8 @@ export function Sidebar() {
               className={cn(
                 "flex items-center gap-4 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-shit text-gold"
-                  : "text-cream hover:bg-shit hover:text-gold"
+                  ? "bg-shit-brown text-glass shadow-glow"
+                  : "text-cream hover:bg-shit-brown/50 hover:text-gold"
               )}
             >
               <item.icon className="h-5 w-5" />
@@ -71,7 +71,7 @@ export function Sidebar() {
       </nav>
 
       <div className="border-t border-shit-dark p-4">
-        <div className="flex items-center gap-3 rounded-lg bg-shit p-3">
+        <div className="flex items-center gap-3 rounded-lg bg-shit-brown/20 p-3 border border-shit-brown/30">
           <div className="h-10 w-10 rounded-full bg-gold text-shit-darker flex items-center justify-center font-bold">
             JD
           </div>
