@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
+import { auth } from '@/lib/auth';
 
 // POST /api/posts/[id]/like - Like or unlike a post
 export async function POST(
@@ -7,31 +8,17 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // Get authenticated user from session
+    const session = await auth();
+    
+    if (!session || !session.user?.id) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
     const { id: postId } = await params;
-    const body = await request.json();
-    const { userId } = body;
 
-    if (!userId) {
-      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
-    }
-
-    // Auto-create user if they don't exist (wallet address)
-    let user = await prisma.user.findUnique({
-      where: { walletAddress: userId },
-    });
-
-    if (!user) {
-      user = await prisma.user.create({
-        data: {
-          walletAddress: userId,
-          username: `user_${userId.slice(0, 8)}`,
-          displayName: `User ${userId.slice(0, 6)}...`,
-        },
-      });
-    }
-
-    // Use the user's actual Prisma ID for the like
-    const userIdForLike = user.id;
+    // Use session user ID directly (it's the Prisma user ID)
+    const userId = session.user.id;
 
     const post = await prisma.post.findUnique({
       where: { id: postId },

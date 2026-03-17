@@ -30,11 +30,7 @@ export default function NotificationsPage() {
 
   useEffect(() => {
     if (session?.user?.id) {
-      fetch("/api/notifications", {
-        headers: {
-          "x-wallet-address": "",
-        },
-      })
+      fetch("/api/notifications")
         .then((res) => res.json())
         .then((data) => {
           setNotifications(data.notifications || []);

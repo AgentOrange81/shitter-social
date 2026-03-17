@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
+import { auth } from '@/lib/auth';
 
 // GET /api/posts - List posts with pagination (latest first)
 export async function GET(request: NextRequest) {
@@ -57,8 +58,15 @@ export async function GET(request: NextRequest) {
 // POST /api/posts - Create a new post
 export async function POST(request: NextRequest) {
   try {
+    // Get authenticated user from session
+    const session = await auth();
+    
+    if (!session || !session.user?.id) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
     const body = await request.json();
-    const { content, authorId, parentId, mediaUrl, mediaType } = body;
+    const { content, parentId, mediaUrl, mediaType } = body;
 
     // Validate content
     if (!content || typeof content !== 'string') {
@@ -69,10 +77,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Content must be 280 characters or less' }, { status: 400 });
     }
 
-    // Validate authorId
-    if (!authorId) {
-      return NextResponse.json({ error: 'Author ID is required' }, { status: 400 });
-    }
+    // Use session user ID - ignore any client-provided authorId
+    const authorId = session.user.id;
 
     // Validate media if provided
     if (mediaUrl && typeof mediaUrl !== 'string') {

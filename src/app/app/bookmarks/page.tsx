@@ -28,11 +28,7 @@ export default function BookmarksPage() {
 
   useEffect(() => {
     if (session?.user?.id) {
-      fetch("/api/bookmarks", {
-        headers: {
-          "x-wallet-address": "",
-        },
-      })
+      fetch("/api/bookmarks")
         .then((res) => res.json())
         .then((data) => {
           setBookmarks(data.bookmarks || []);

@@ -1,38 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
+import { auth } from '@/lib/auth';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // Get authenticated user from session
+    const session = await auth();
+    
+    if (!session || !session.user?.id) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
     const { id: postId } = await params;
     const body = await request.json();
-    const { userId, comment } = body;
-
-    if (!userId) {
-      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
-    }
+    const { comment } = body;
 
     // Validate comment length if provided
     if (comment && comment.length > 280) {
       return NextResponse.json({ error: 'Comment must be 280 characters or less' }, { status: 400 });
     }
 
-    // Auto-create user if they don't exist (wallet address)
-    let user = await prisma.user.findUnique({
-      where: { walletAddress: userId },
-    });
-
-    if (!user) {
-      user = await prisma.user.create({
-        data: {
-          walletAddress: userId,
-          username: `user_${userId.slice(0, 8)}`,
-          displayName: `User ${userId.slice(0, 6)}...`,
-        },
-      });
-    }
+    // Use session user ID directly
+    const userId = session.user.id;
 
     const post = await prisma.post.findUnique({
       where: { id: postId },

@@ -1,19 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
+import { auth } from '@/lib/auth';
 
 // GET /api/messages - List conversations or get messages
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const walletAddress = searchParams.get('walletAddress');
-    const conversationId = searchParams.get('conversationId');
-
-    if (!walletAddress) {
-      return NextResponse.json({ error: 'Wallet address required' }, { status: 400 });
+    // Get authenticated user from session
+    const session = await auth();
+    
+    if (!session || !session.user?.id) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
+    const { searchParams } = new URL(request.url);
+    const conversationId = searchParams.get('conversationId');
+
+    // Use session user ID
     const user = await prisma.user.findUnique({
-      where: { walletAddress },
+      where: { id: session.user.id },
       select: { id: true },
     });
 
@@ -127,28 +131,28 @@ export async function GET(request: NextRequest) {
 // POST /api/messages - Send a message
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { senderWallet, recipientWallet, content, conversationId } = body;
-
-    if (!content || !senderWallet) {
-      return NextResponse.json({ error: 'Sender and content required' }, { status: 400 });
+    // Get authenticated user from session
+    const session = await auth();
+    
+    if (!session || !session.user?.id) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
-    // Get sender
-    let sender = await prisma.user.findUnique({
-      where: { walletAddress: senderWallet },
+    const body = await request.json();
+    const { recipientWallet, content, conversationId } = body;
+
+    if (!content) {
+      return NextResponse.json({ error: 'Content required' }, { status: 400 });
+    }
+
+    // Use session user as sender
+    const sender = await prisma.user.findUnique({
+      where: { id: session.user.id },
       select: { id: true },
     });
 
     if (!sender) {
-      sender = await prisma.user.create({
-        data: {
-          walletAddress: senderWallet,
-          username: `user_${senderWallet.slice(0, 8)}`,
-          displayName: `User ${senderWallet.slice(0, 6)}...`,
-        },
-        select: { id: true },
-      });
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Find or create conversation

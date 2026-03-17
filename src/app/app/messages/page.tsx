@@ -31,11 +31,7 @@ export default function MessagesPage() {
 
   useEffect(() => {
     if (session?.user?.id) {
-      fetch("/api/messages", {
-        headers: {
-          "x-wallet-address": "",
-        },
-      })
+      fetch("/api/messages")
         .then((res) => res.json())
         .then((data) => {
           setConversations(data.conversations || []);

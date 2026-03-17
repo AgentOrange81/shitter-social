@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
+import { auth } from '@/lib/auth';
 
 // GET /api/users/[username]/follow - Check follow status
 export async function GET(
@@ -55,13 +56,14 @@ export async function POST(
   { params }: { params: Promise<{ username: string }> }
 ) {
   try {
-    const { username } = await params;
-    const body = await request.json();
-    const { follower } = body;
-
-    if (!follower) {
-      return NextResponse.json({ error: 'Follower wallet address required' }, { status: 400 });
+    // Get authenticated user from session
+    const session = await auth();
+    
+    if (!session || !session.user?.id) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
+
+    const { username } = await params;
 
     // Get the user to follow
     const userToFollow = await prisma.user.findUnique({
@@ -73,22 +75,14 @@ export async function POST(
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Get or create the follower user
-    let followerUser = await prisma.user.findUnique({
-      where: { walletAddress: follower },
+    // Use session user as follower
+    const followerUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
       select: { id: true },
     });
 
     if (!followerUser) {
-      // Create user if doesn't exist
-      followerUser = await prisma.user.create({
-        data: {
-          walletAddress: follower,
-          username: `user_${follower.slice(0, 8)}`,
-          displayName: `User ${follower.slice(0, 6)}...`,
-        },
-        select: { id: true },
-      });
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Check if already following
