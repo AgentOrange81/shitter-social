@@ -39,13 +39,11 @@ export default function HomeFeedPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-zinc-950 text-white">
-        {/* Header with Wallet */}
         <div className="bg-zinc-900 border-b border-zinc-800">
-          <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="max-w-2xl mx-auto px-4 py-4">
             <h1 className="text-2xl font-bold">
               <span className="text-emerald-500">SHIT</span>TER
             </h1>
-            <WalletMultiButton className="!bg-emerald-600 !hover:bg-emerald-500 !text-white !font-bold !px-4 !py-2 !rounded-xl !text-sm" />
           </div>
         </div>
         <div className="flex items-center justify-center py-32">
@@ -57,13 +55,12 @@ export default function HomeFeedPage() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
-      {/* Header with Wallet */}
+      {/* Header */}
       <div className="bg-zinc-900 border-b border-zinc-800 sticky top-0">
-        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-2xl mx-auto px-4 py-4">
           <h1 className="text-2xl font-bold">
             <span className="text-emerald-500">SHIT</span>TER
           </h1>
-          <WalletMultiButton className="!bg-emerald-600 !hover:bg-emerald-500 !text-white !font-bold !px-4 !py-2 !rounded-xl !text-sm" />
         </div>
       </div>
 
