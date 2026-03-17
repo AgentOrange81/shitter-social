@@ -26,13 +26,18 @@ export default function LandingPage() {
           <WalletMultiButton className="!bg-emerald-600 !hover:bg-emerald-500 !text-white !font-bold !px-6 !py-3 !rounded-xl" />
         </div>
 
+        {/* Always visible - guests can browse */}
+        <Link
+          href="/app"
+          className="px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all"
+        >
+          Enter Shitter →
+        </Link>
+
         {connected && (
-          <Link
-            href="/app"
-            className="px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all"
-          >
-            Enter Shitter →
-          </Link>
+          <p className="mt-4 text-zinc-400 text-sm">
+            Wallet connected - full features unlocked
+          </p>
         )}
       </div>
 
