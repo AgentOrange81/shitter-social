@@ -23,7 +23,8 @@ export default function CreatePostButton() {
 
   const handleSuccess = () => {
     handleClose();
-    window.location.reload(); // Refresh to show new post
+    // Force reload to bypass cache and show new post
+    window.location.replace(window.location.href);
   };
 
   return (
