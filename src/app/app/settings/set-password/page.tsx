@@ -68,7 +68,7 @@ export default function SetPasswordPage() {
           <p className="text-zinc-400 mb-4">Please sign in to set your password</p>
           <button
             onClick={() => router.push("/login")}
-            className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl"
+            className="px-6 py-3 bg-emerald-600 hover:bg-amber-800 text-white font-bold rounded-xl"
           >
             Go to Login
           </button>
@@ -81,7 +81,7 @@ export default function SetPasswordPage() {
     return (
       <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
         <div className="text-center">
-          <div className="text-emerald-500 text-6xl mb-4">✓</div>
+          <div className="text-amber-800 text-6xl mb-4">✓</div>
           <h1 className="text-2xl font-bold mb-4">Password Set!</h1>
           <p className="text-zinc-400 mb-4">You can now log in with username and password</p>
           <p className="text-zinc-500 text-sm">Redirecting...</p>
@@ -93,7 +93,7 @@ export default function SetPasswordPage() {
   return (
     <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
       <div className="max-w-md w-full mx-4 p-8 bg-zinc-900 rounded-xl border border-zinc-800">
-        <h1 className="text-2xl font-bold text-emerald-500 mb-2">Set Password</h1>
+        <h1 className="text-2xl font-bold text-amber-800 mb-2">Set Password</h1>
         <p className="text-zinc-400 mb-6">Create a password for your account to enable username/password login</p>
 
         <form onSubmit={handleSetPassword}>
@@ -105,7 +105,7 @@ export default function SetPasswordPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500"
+              className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-amber-800"
               placeholder="Enter password"
               required
               minLength={8}
@@ -120,7 +120,7 @@ export default function SetPasswordPage() {
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500"
+              className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-amber-800"
               placeholder="Confirm password"
               required
               minLength={8}
@@ -134,7 +134,7 @@ export default function SetPasswordPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 px-4 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3 px-4 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-amber-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? "Setting Password..." : "Set Password"}
           </button>

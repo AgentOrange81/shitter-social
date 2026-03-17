@@ -52,7 +52,7 @@ export default function ProfilePage() {
             <div className="flex gap-4 justify-center">
               <button
                 onClick={() => router.push("/login")}
-                className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl"
+                className="px-6 py-3 bg-emerald-600 hover:bg-amber-800 text-white font-bold rounded-xl"
               >
                 Log In
               </button>
@@ -73,7 +73,7 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-800 mx-auto mb-4"></div>
           <p className="text-zinc-400">Loading profile...</p>
         </div>
       </div>
@@ -114,15 +114,15 @@ export default function ProfilePage() {
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
-            <div className="text-2xl font-bold text-emerald-500">0</div>
+            <div className="text-2xl font-bold text-amber-800">0</div>
             <div className="text-zinc-400 text-sm">Posts</div>
           </div>
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
-            <div className="text-2xl font-bold text-emerald-500">0</div>
+            <div className="text-2xl font-bold text-amber-800">0</div>
             <div className="text-zinc-400 text-sm">Followers</div>
           </div>
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
-            <div className="text-2xl font-bold text-emerald-500">0</div>
+            <div className="text-2xl font-bold text-amber-800">0</div>
             <div className="text-zinc-400 text-sm">Following</div>
           </div>
         </div>
@@ -133,7 +133,7 @@ export default function ProfilePage() {
             <p className="text-zinc-400 mb-4">Connect your wallet to enable full profile features</p>
             <button
               onClick={() => router.push("/")}
-              className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl"
+              className="px-6 py-3 bg-emerald-600 hover:bg-amber-800 text-white font-bold rounded-xl"
             >
               Connect Wallet
             </button>
@@ -145,7 +145,7 @@ export default function ProfilePage() {
           <p className="text-zinc-400 mb-4">No posts yet</p>
           <button
             onClick={() => router.push("/")}
-            className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl"
+            className="px-6 py-3 bg-emerald-600 hover:bg-amber-800 text-white font-bold rounded-xl"
           >
             Create Your First Post
           </button>

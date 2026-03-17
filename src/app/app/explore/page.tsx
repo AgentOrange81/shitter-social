@@ -39,7 +39,7 @@ export default function ExplorePage() {
     return (
       <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-800 mx-auto mb-4"></div>
           <p className="text-zinc-400">Loading explore...</p>
         </div>
       </div>
@@ -66,14 +66,14 @@ export default function ExplorePage() {
             {connected ? (
               <button
                 onClick={() => router.push("/")}
-                className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl"
+                className="px-6 py-3 bg-emerald-600 hover:bg-amber-800 text-white font-bold rounded-xl"
               >
                 Create Post
               </button>
             ) : (
               <button
                 onClick={() => router.push("/")}
-                className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl"
+                className="px-6 py-3 bg-emerald-600 hover:bg-amber-800 text-white font-bold rounded-xl"
               >
                 Connect Wallet
               </button>
@@ -102,13 +102,13 @@ export default function ExplorePage() {
                     </div>
                     <p className="text-white whitespace-pre-wrap">{post.content}</p>
                     <div className="flex items-center space-x-6 mt-3 text-zinc-500 text-sm">
-                      <button className="hover:text-emerald-500 transition-colors">
+                      <button className="hover:text-amber-800 transition-colors">
                         💬 {post.replies || 0}
                       </button>
-                      <button className="hover:text-emerald-500 transition-colors">
+                      <button className="hover:text-amber-800 transition-colors">
                         🔄 {post.reposts || 0}
                       </button>
-                      <button className="hover:text-emerald-500 transition-colors">
+                      <button className="hover:text-amber-800 transition-colors">
                         ❤️ {post.likes || 0}
                       </button>
                     </div>

@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import PostCompose from "@/components/PostCompose";
+import CreatePostButton from "@/components/CreatePostButton";
 
 interface Post {
   id: string;
@@ -42,12 +43,12 @@ export default function HomeFeedPage() {
         <div className="bg-zinc-900 border-b border-zinc-800">
           <div className="max-w-2xl mx-auto px-4 py-4">
             <h1 className="text-2xl font-bold">
-              <span className="text-emerald-500">SHIT</span>TER
+              <span className="text-amber-800">SHIT</span>TER
             </h1>
           </div>
         </div>
         <div className="flex items-center justify-center py-32">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-800"></div>
         </div>
       </div>
     );
@@ -59,7 +60,7 @@ export default function HomeFeedPage() {
       <div className="bg-zinc-900 border-b border-zinc-800 sticky top-0">
         <div className="max-w-2xl mx-auto px-4 py-4">
           <h1 className="text-2xl font-bold">
-            <span className="text-emerald-500">SHIT</span>TER
+            <span className="text-amber-800">SHIT</span>TER
           </h1>
         </div>
       </div>
@@ -68,7 +69,7 @@ export default function HomeFeedPage() {
       <div className="bg-zinc-900/50 border-b border-zinc-800">
         <div className="max-w-2xl mx-auto px-4 py-2">
           <nav className="flex space-x-6 text-sm">
-            <Link href="/app/explore" className="text-emerald-500 font-medium">Explore</Link>
+            <Link href="/app/explore" className="text-amber-800 font-medium">Explore</Link>
             {connected ? (
               <>
                 <Link href="/app/notifications" className="text-zinc-400 hover:text-white">Notifications</Link>
@@ -83,6 +84,16 @@ export default function HomeFeedPage() {
         </div>
       </div>
 
+      {/* Inline Compose (only for connected users) */}
+      {connected && (
+        <div className="max-w-2xl mx-auto px-4 py-4">
+          <PostCompose placeholder="What's on your mind?" />
+        </div>
+      )}
+
+      {/* Floating Create Post Button */}
+      <CreatePostButton />
+
       {/* Content */}
       <div className="max-w-2xl mx-auto">
         {posts.length === 0 ? (
@@ -92,15 +103,15 @@ export default function HomeFeedPage() {
             <p className="text-zinc-400 mb-6">Be the first to post something!</p>
             {connected ? (
               <button
-                onClick={() => router.push("/app/posts/new")}
-                className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl"
+                onClick={() => {}}
+                className="px-6 py-3 bg-amber-800 hover:bg-amber-700 text-white font-bold rounded-xl"
               >
                 Create Post
               </button>
             ) : (
               <Link
                 href="/login"
-                className="inline-block px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl"
+                className="inline-block px-6 py-3 bg-amber-800 hover:bg-amber-700 text-white font-bold rounded-xl"
               >
                 Connect Wallet
               </Link>
@@ -115,7 +126,7 @@ export default function HomeFeedPage() {
                 className="block p-4 hover:bg-zinc-900 transition-colors"
               >
                 <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
+                  <div className="w-10 h-10 bg-amber-800 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
                     {post.authorUsername?.charAt(0).toUpperCase() || "A"}
                   </div>
                   <div className="flex-1 min-w-0">

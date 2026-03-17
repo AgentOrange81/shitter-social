@@ -55,7 +55,7 @@ export default function NotificationsPage() {
           <p className="text-zinc-400 mb-4">Please connect your wallet to view notifications</p>
           <button
             onClick={() => router.push("/")}
-            className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl"
+            className="px-6 py-3 bg-emerald-600 hover:bg-amber-800 text-white font-bold rounded-xl"
           >
             Go Home
           </button>
@@ -73,7 +73,7 @@ export default function NotificationsPage() {
           </div>
         </div>
         <div className="max-w-2xl mx-auto p-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-800"></div>
         </div>
       </div>
     );
