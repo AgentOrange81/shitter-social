@@ -13,22 +13,39 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (session?.user?.id) {
-      fetch(`/api/users/me`, {
-        headers: {
-          "x-wallet-address": publicKey?.toString() || "",
-        },
+    if (!session?.user?.id) return;
+
+    let isMounted = true;
+    const controller = new AbortController();
+
+    fetch(`/api/users/me`, {
+      signal: controller.signal,
+      headers: {
+        "x-wallet-address": publicKey?.toString() || "",
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch profile");
+        return res.json();
       })
-        .then((res) => res.json())
-        .then((data) => {
+      .then((data) => {
+        if (isMounted) {
           setUser(data);
           setLoading(false);
-        })
-        .catch((err) => {
+        }
+      })
+      .catch((err) => {
+        if (err.name === "AbortError") return;
+        if (isMounted) {
           console.error("Failed to fetch user:", err);
           setLoading(false);
-        });
-    }
+        }
+      });
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
   }, [session, publicKey]);
 
   // Guest browsing - show public view without wallet connection
