@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import PostCompose from "@/components/PostCompose";
+import { PostCompose } from "@/components/PostCompose";
 import CreatePostButton from "@/components/CreatePostButton";
 
 interface Post {

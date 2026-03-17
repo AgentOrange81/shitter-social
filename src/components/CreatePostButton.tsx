@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import PostCompose from "./PostCompose";
+import { PostCompose } from "./PostCompose";
 
 export default function CreatePostButton() {
   const { connected } = useWallet();
@@ -62,8 +62,6 @@ export default function CreatePostButton() {
             <div className="p-4">
               <PostCompose
                 onSuccess={handleSuccess}
-                onCancel={handleClose}
-                autoFocus={true}
               />
             </div>
           </div>

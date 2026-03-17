@@ -4,19 +4,18 @@ import { useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useToast } from "@/components/ui/toast";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 interface PostComposeProps {
   onSuccess?: () => void;
-  onCancel?: () => void;
   placeholder?: string;
-  autoFocus?: boolean;
 }
 
-export default function PostCompose({ onSuccess, onCancel, placeholder = "What's on your mind?", autoFocus = false }: PostComposeProps) {
-  const { connected, publicKey } = useWallet();
+export function PostCompose({ onSuccess, placeholder = "What's on your mind?" }: PostComposeProps) {
+  const { connected, publicKey, signMessage } = useWallet();
   const router = useRouter();
-  const { toast } = useToast();
   const [content, setContent] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -31,12 +30,12 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      setError("Please select an image file");
+      toast.error("Please select an image file");
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      setError("Image must be less than 5MB");
+      toast.error("Image must be less than 5MB");
       return;
     }
 
@@ -57,13 +56,19 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
   };
 
   const handleSubmit = async () => {
-    if (!connected) {
-      setError("Please connect your wallet to post");
+    if (!content.trim() && !imageFile) {
+      toast.error("Post content is required");
       return;
     }
 
-    if (!content.trim()) {
-      setError("Post content is required");
+    if (content.length > MAX_CHARS) {
+      toast.error(`Post must be ${MAX_CHARS} characters or less`);
+      return;
+    }
+
+    if (!connected || !publicKey) {
+      toast.error("Connect wallet to post");
+      router.push("/login");
       return;
     }
 
@@ -71,7 +76,7 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
     setError(null);
 
     try {
-      let mediaUrl: string | undefined = undefined;
+      let mediaUrl: string | null = null;
 
       // Upload image if attached
       if (imageFile) {
@@ -90,11 +95,7 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
         const mediaData = await mediaRes.json();
 
         if (!mediaData.uploadUrl) {
-          toast({
-            title: "Upload Failed",
-            description: "Failed to get upload URL",
-            type: "error",
-          });
+          toast.error("Failed to get upload URL");
           throw new Error("Failed to get upload URL");
         }
 
@@ -108,11 +109,7 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
         });
 
         if (!uploadRes.ok) {
-          toast({
-            title: "Upload Failed",
-            description: "Failed to upload image",
-            type: "error",
-          });
+          toast.error("Failed to upload image");
           throw new Error("Failed to upload image");
         }
 
@@ -128,7 +125,7 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
         },
         body: JSON.stringify({
           content: content.trim(),
-          authorId: publicKey?.toString() || "",
+          authorId: publicKey.toString(),
           mediaUrl: mediaUrl,
           mediaType: imageFile?.type,
         }),
@@ -137,20 +134,12 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
       const postData = await postRes.json();
 
       if (!postRes.ok) {
-        toast({
-          title: "Post Failed",
-          description: postData.error || "Failed to create post",
-          type: "error",
-        });
+        toast.error(postData.error || "Failed to create post");
         throw new Error(postData.error || "Failed to create post");
       }
 
       // Success
-      toast({
-        title: "Post Created",
-        description: "Your post is live!",
-        type: "success",
-      });
+      toast.success("Your post is live!");
       setContent("");
       setImageFile(null);
       setImagePreview(null);
@@ -162,11 +151,7 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
       }
     } catch (err: any) {
       console.error("Post error:", err);
-      toast({
-        title: "Error",
-        description: err.message || "Failed to create post",
-        type: "error",
-      });
+      toast.error(err.message || "Failed to create post");
       setError(err.message || "Failed to create post");
     } finally {
       setSubmitting(false);
@@ -175,32 +160,31 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
 
   if (!connected) {
     return (
-      <div className="bg-shit-brown/20 border border-shit-brown/30 rounded-xl p-6 shadow-lifted">
+      <Card className="border-shit-brown/30 bg-shit-brown/20 p-6 shadow-lifted">
         <p className="text-cream/70 mb-4">Connect your wallet to post</p>
-        <button
+        <Button
           onClick={() => router.push("/login")}
-          className="px-6 py-3 bg-glass hover:bg-gold text-shit-darker font-bold rounded-xl transition-all shadow-glow"
+          className="bg-glass hover:bg-gold text-shit-darker shadow-glow"
         >
           Connect Wallet
-        </button>
-      </div>
+        </Button>
+      </Card>
     );
   }
 
   return (
-    <div className="bg-shit-brown/10 border border-shit-brown/30 rounded-xl p-4 shadow-lifted">
+    <Card className="border-shit-brown/30 bg-shit-brown/10 p-4 shadow-lifted">
       {/* Text Area */}
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder={placeholder}
-        autoFocus={autoFocus}
         maxLength={MAX_CHARS}
         rows={3}
-        className="w-full bg-shit-brown/5 border border-shit-brown/30 rounded-lg p-3 text-cream placeholder-shit-medium focus:outline-none focus:border-glass focus:ring-1 focus:ring-glass resize-none transition-all"
+        className="w-full bg-shit-brown/5 border border-shit-brown/30 rounded-lg p-3 text-cream placeholder:text-shit-medium focus:outline-none focus:border-glass focus:ring-1 focus:ring-glass resize-none transition-all"
       />
 
-      {/* Character Counter */}
+      {/* Character Counter + Image Upload */}
       <div className="flex items-center justify-between mt-2">
         <span className={`text-sm ${content.length > MAX_CHARS ? "text-red-400" : "text-shit-medium"}`}>
           {content.length}/{MAX_CHARS}
@@ -250,22 +234,15 @@ export default function PostCompose({ onSuccess, onCancel, placeholder = "What's
 
       {/* Submit Button */}
       <div className="flex items-center justify-between mt-4">
-        {onCancel && (
-          <button
-            onClick={onCancel}
-            className="px-4 py-2 text-shit-medium hover:text-cream transition-colors"
-          >
-            Cancel
-          </button>
-        )}
-        <button
+        <div />
+        <Button
           onClick={handleSubmit}
           disabled={!content.trim() || submitting || uploading || content.length > MAX_CHARS}
-          className="px-6 py-2 bg-glass hover:bg-gold disabled:bg-shit-brown/30 disabled:cursor-not-allowed text-shit-darker font-bold rounded-xl transition-all shadow-glow disabled:shadow-none"
+          className="bg-glass hover:bg-gold text-shit-darker shadow-glow disabled:bg-shit-brown/30 disabled:shadow-none"
         >
           {submitting ? "Posting..." : uploading ? "Uploading..." : "Post"}
-        </button>
+        </Button>
       </div>
-    </div>
+    </Card>
   );
 }

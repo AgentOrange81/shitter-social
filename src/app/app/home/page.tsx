@@ -1,162 +1,197 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useToast } from "@/components/ui/toast";
+import { useState, useEffect } from "react"
+import { useWallet } from "@solana/wallet-adapter-react"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { PostCard } from "@/components/PostCard"
+import { PostCompose } from "@/components/PostCompose"
+import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Card } from "@/components/ui/card"
+import { toast } from "sonner"
 
 interface Post {
-  id: string;
-  content: string;
-  authorId: string;
-  author?: {
-    id: string;
-    username?: string;
-    displayName?: string;
-    avatar?: string;
-  };
-  createdAt: string;
-  _count?: {
-    likes: number;
-    replies: number;
-    reposts: number;
-  };
+  id: string
+  content: string
+  authorId: string
+  authorUsername?: string
+  authorDisplayName?: string
+  authorAvatar?: string
+  createdAt: string
+  image?: string | null
+  likes?: number
+  replies?: number
+  reposts?: number
 }
 
 export default function HomeFeedPage() {
-  const { connected } = useWallet();
-  const router = useRouter();
-  const { toast } = useToast();
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { connected } = useWallet()
+  const router = useRouter()
+  const [posts, setPosts] = useState<Post[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    let isMounted = true;
-    const controller = new AbortController();
+    let isMounted = true
+    const controller = new AbortController()
 
     fetch("/api/posts/feed", { signal: controller.signal })
       .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch feed");
-        return res.json();
+        if (!res.ok) throw new Error("Failed to fetch feed")
+        return res.json()
       })
       .then((data) => {
         if (isMounted) {
-          setPosts(data.posts || []);
-          setLoading(false);
+          setPosts(data.posts || [])
+          setLoading(false)
         }
       })
       .catch((err) => {
-        if (err.name === "AbortError") return;
+        if (err.name === "AbortError") return
         if (isMounted) {
-          console.error("Failed to fetch posts:", err);
-          toast({
-            title: "Feed Error",
-            description: "Failed to load posts. Try refreshing.",
-            type: "error",
-          });
-          setError(err.message);
-          setLoading(false);
+          console.error("Failed to fetch posts:", err)
+          toast.error("Failed to load feed")
+          setError(err.message)
+          setLoading(false)
         }
-      });
+      })
 
     return () => {
-      isMounted = false;
-      controller.abort();
-    };
-  }, [toast]);
+      isMounted = false
+      controller.abort()
+    }
+  }, [])
+
+  const handleLike = async (postId: string) => {
+    if (!connected) {
+      toast.error("Connect wallet to like posts")
+      return
+    }
+    
+    try {
+      const res = await fetch(`/api/posts/${postId}/like`, { method: "POST" })
+      const data = await res.json()
+      
+      if (res.ok) {
+        setPosts(posts.map(p => 
+          p.id === postId 
+            ? { ...p, likes: data.likeCount, liked: data.liked }
+            : p
+        ))
+      }
+    } catch (err) {
+      toast.error("Failed to like post")
+    }
+  }
+
+  const handleRepost = async (postId: string) => {
+    if (!connected) {
+      toast.error("Connect wallet to repost")
+      return
+    }
+    
+    try {
+      const res = await fetch(`/api/posts/${postId}/repost`, { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({})
+      })
+      const data = await res.json()
+      
+      if (res.ok) {
+        setPosts(posts.map(p => 
+          p.id === postId 
+            ? { ...p, reposts: data.repostCount, reposted: data.reposted }
+            : p
+        ))
+      }
+    } catch (err) {
+      toast.error("Failed to repost")
+    }
+  }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-shit-darker flex items-center justify-center">
-        <div className="text-center animate-fade-in-up">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-glass mx-auto mb-4"></div>
-          <p className="text-cream">Loading feed...</p>
-        </div>
+      <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
+        {[1, 2, 3].map((i) => (
+          <Card key={i} className="border-shit-brown/30 bg-shit-brown/5 p-4">
+            <div className="flex gap-3">
+              <Skeleton className="h-10 w-10 rounded-full" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-16 w-full" />
+              </div>
+            </div>
+          </Card>
+        ))}
       </div>
-    );
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-12 text-center">
+        <div className="text-6xl mb-4 animate-float">💥</div>
+        <h2 className="text-xl font-bold text-cream mb-2">Failed to Load Feed</h2>
+        <p className="text-shit-medium mb-6">{error}</p>
+        <Button
+          onClick={() => router.refresh()}
+          className="bg-glass hover:bg-gold text-shit-darker shadow-glow"
+        >
+          Retry
+        </Button>
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-shit-darker">
-      {/* Header */}
-      <div className="bg-shit-brown/10 border-b border-shit-brown/30 sticky top-0 shadow-glow">
-        <div className="max-w-2xl mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold text-cream">Home</h1>
-          <p className="text-shit-medium text-sm mt-1">Your feed</p>
+    <div className="max-w-2xl mx-auto px-4 py-6">
+      {/* Compose box (only for connected users) */}
+      {connected && (
+        <div className="mb-6">
+          <PostCompose onSuccess={() => router.refresh()} />
         </div>
-      </div>
+      )}
 
-      {/* Content */}
-      <div className="max-w-2xl mx-auto">
-        {error ? (
-          <div className="p-8 text-center animate-fade-in-up">
-            <div className="text-6xl mb-4">💥</div>
-            <h2 className="text-xl font-bold mb-2 text-cream">Failed to Load Feed</h2>
-            <p className="text-shit-medium mb-6">{error}</p>
-            <button
-              onClick={() => router.refresh()}
-              className="px-6 py-3 bg-glass hover:bg-gold text-shit-darker font-bold rounded-xl transition-all shadow-glow"
-            >
-              Refresh
-            </button>
-          </div>
-        ) : posts.length === 0 ? (
-          <div className="p-8 text-center animate-fade-in-up">
+      {/* Posts feed */}
+      <div className="space-y-4">
+        {posts.length === 0 ? (
+          <Card className="border-shit-brown/30 bg-shit-brown/10 p-8 text-center">
             <div className="text-6xl mb-4 animate-float">🐸</div>
-            <h2 className="text-xl font-bold mb-2 text-cream">No Posts Yet</h2>
+            <h3 className="text-xl font-bold text-cream mb-2">No Posts Yet</h3>
             <p className="text-shit-medium mb-6">Be the first to post something!</p>
             {connected ? (
-              <button
-                onClick={() => router.push("/")}
-                className="px-6 py-3 bg-glass hover:bg-gold text-shit-darker font-bold rounded-xl transition-all shadow-glow"
-              >
-                Create Post
-              </button>
+              <PostCompose placeholder="Start the conversation..." onSuccess={() => router.refresh()} />
             ) : (
-              <button
-                onClick={() => router.push("/")}
-                className="px-6 py-3 bg-glass hover:bg-gold text-shit-darker font-bold rounded-xl transition-all shadow-glow"
+              <Button
+                onClick={() => router.push("/login")}
+                className="bg-glass hover:bg-gold text-shit-darker shadow-glow"
               >
                 Connect Wallet
-              </button>
+              </Button>
             )}
-          </div>
+          </Card>
         ) : (
-          <div className="divide-y divide-zinc-800">
-            {posts.map((post) => (
-              <Link
-                key={post.id}
-                href={`/app/posts/${post.id}`}
-                className="block p-4 hover:bg-zinc-900 transition-colors"
-              >
-                <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 bg-amber-800 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
-                    {post.author?.username?.charAt(0).toUpperCase() || post.author?.displayName?.charAt(0).toUpperCase() || "A"}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center space-x-2 mb-1">
-                      <span className="font-bold text-white">
-                        {post.author?.username || post.author?.displayName || "Anonymous"}
-                      </span>
-                      <span className="text-zinc-500 text-sm">
-                        {new Date(post.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <p className="text-white whitespace-pre-wrap">{post.content}</p>
-                    <div className="flex items-center space-x-6 mt-3 text-zinc-500 text-sm">
-                      <span>💬 {post._count?.replies ?? 0}</span>
-                      <span>🔄 {post._count?.reposts ?? 0}</span>
-                      <span>❤️ {post._count?.likes ?? 0}</span>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+          posts.map((post) => (
+            <PostCard
+              key={post.id}
+              id={post.id}
+              content={post.content}
+              authorUsername={post.authorUsername}
+              authorDisplayName={post.authorDisplayName}
+              authorAvatar={post.authorAvatar}
+              createdAt={post.createdAt}
+              image={post.image}
+              likes={post.likes}
+              replies={post.replies}
+              reposts={post.reposts}
+              onLike={() => handleLike(post.id)}
+              onRepost={() => handleRepost(post.id)}
+            />
+          ))
         )}
       </div>
     </div>
-  );
+  )
 }
