@@ -30,18 +30,34 @@ export default function MessagesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (session?.user?.id) {
-      fetch("/api/messages")
-        .then((res) => res.json())
-        .then((data) => {
+    if (!session?.user?.id) return;
+
+    let isMounted = true;
+    const controller = new AbortController();
+
+    fetch("/api/messages", { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch messages");
+        return res.json();
+      })
+      .then((data) => {
+        if (isMounted) {
           setConversations(data.conversations || []);
           setLoading(false);
-        })
-        .catch((err) => {
+        }
+      })
+      .catch((err) => {
+        if (err.name === "AbortError") return;
+        if (isMounted) {
           console.error("Failed to fetch messages:", err);
           setLoading(false);
-        });
-    }
+        }
+      });
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
   }, [session]);
 
   if (!connected && !session) {

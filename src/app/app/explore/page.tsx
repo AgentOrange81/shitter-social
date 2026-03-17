@@ -30,16 +30,32 @@ export default function ExplorePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/posts/feed")
-      .then((res) => res.json())
+    let isMounted = true;
+    const controller = new AbortController();
+
+    fetch("/api/posts/feed", { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch feed");
+        return res.json();
+      })
       .then((data) => {
-        setPosts(data.posts || []);
-        setLoading(false);
+        if (isMounted) {
+          setPosts(data.posts || []);
+          setLoading(false);
+        }
       })
       .catch((err) => {
-        console.error("Failed to fetch posts:", err);
-        setLoading(false);
+        if (err.name === "AbortError") return;
+        if (isMounted) {
+          console.error("Failed to fetch posts:", err);
+          setLoading(false);
+        }
       });
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
   }, []);
 
   if (loading) {

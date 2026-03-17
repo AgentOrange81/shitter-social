@@ -27,18 +27,34 @@ export default function BookmarksPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (session?.user?.id) {
-      fetch("/api/bookmarks")
-        .then((res) => res.json())
-        .then((data) => {
+    if (!session?.user?.id) return;
+
+    let isMounted = true;
+    const controller = new AbortController();
+
+    fetch("/api/bookmarks", { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch bookmarks");
+        return res.json();
+      })
+      .then((data) => {
+        if (isMounted) {
           setBookmarks(data.bookmarks || []);
           setLoading(false);
-        })
-        .catch((err) => {
+        }
+      })
+      .catch((err) => {
+        if (err.name === "AbortError") return;
+        if (isMounted) {
           console.error("Failed to fetch bookmarks:", err);
           setLoading(false);
-        });
-    }
+        }
+      });
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
   }, [session]);
 
   if (!connected && !session) {

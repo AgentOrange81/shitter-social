@@ -29,18 +29,34 @@ export default function NotificationsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (session?.user?.id) {
-      fetch("/api/notifications")
-        .then((res) => res.json())
-        .then((data) => {
+    if (!session?.user?.id) return;
+
+    let isMounted = true;
+    const controller = new AbortController();
+
+    fetch("/api/notifications", { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch notifications");
+        return res.json();
+      })
+      .then((data) => {
+        if (isMounted) {
           setNotifications(data.notifications || []);
           setLoading(false);
-        })
-        .catch((err) => {
+        }
+      })
+      .catch((err) => {
+        if (err.name === "AbortError") return;
+        if (isMounted) {
           console.error("Failed to fetch notifications:", err);
           setLoading(false);
-        });
-    }
+        }
+      });
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
   }, [session]);
 
   if (!connected && !session) {
