@@ -62,13 +62,13 @@ export default function MessagesPage() {
 
   if (!connected && !session) {
     return (
-      <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Connect Wallet</h1>
-          <p className="text-zinc-400 mb-4">Please connect your wallet to view messages</p>
+      <div className="min-h-screen bg-shit-darker flex items-center justify-center">
+        <div className="text-center animate-fade-in-up">
+          <h1 className="text-2xl font-bold mb-4 text-cream">Connect Wallet</h1>
+          <p className="text-shit-medium mb-4">Please connect your wallet to view messages</p>
           <button
             onClick={() => router.push("/")}
-            className="px-6 py-3 bg-emerald-600 hover:bg-amber-800 text-white font-bold rounded-xl"
+            className="px-6 py-3 bg-glass hover:bg-gold text-shit-darker font-bold rounded-xl transition-all shadow-glow"
           >
             Go Home
           </button>
@@ -79,25 +79,25 @@ export default function MessagesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-zinc-950 text-white">
-        <div className="bg-zinc-900 border-b border-zinc-800">
+      <div className="min-h-screen bg-shit-darker">
+        <div className="bg-shit-brown/10 border-b border-shit-brown/30">
           <div className="max-w-2xl mx-auto px-4 py-4">
-            <h1 className="text-2xl font-bold">Messages</h1>
+            <h1 className="text-2xl font-bold text-cream">Messages</h1>
           </div>
         </div>
         <div className="max-w-2xl mx-auto p-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-800"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-glass"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white">
+    <div className="min-h-screen bg-shit-darker">
       {/* Header */}
-      <div className="bg-zinc-900 border-b border-zinc-800 sticky top-0">
+      <div className="bg-shit-brown/10 border-b border-shit-brown/30 sticky top-0 shadow-glow">
         <div className="max-w-2xl mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold">Messages</h1>
+          <h1 className="text-2xl font-bold text-cream">Messages</h1>
           <p className="text-zinc-400 text-sm mt-1">Your conversations</p>
         </div>
       </div>
