@@ -69,55 +69,55 @@ export default function HomeFeedPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-800 mx-auto mb-4"></div>
-          <p className="text-zinc-400">Loading feed...</p>
+      <div className="min-h-screen bg-shit-darker flex items-center justify-center">
+        <div className="text-center animate-fade-in-up">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-glass mx-auto mb-4"></div>
+          <p className="text-cream">Loading feed...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white">
+    <div className="min-h-screen bg-shit-darker">
       {/* Header */}
-      <div className="bg-zinc-900 border-b border-zinc-800 sticky top-0">
+      <div className="bg-shit-brown/10 border-b border-shit-brown/30 sticky top-0 shadow-glow">
         <div className="max-w-2xl mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold">Home</h1>
-          <p className="text-zinc-400 text-sm mt-1">Your feed</p>
+          <h1 className="text-2xl font-bold text-cream">Home</h1>
+          <p className="text-shit-medium text-sm mt-1">Your feed</p>
         </div>
       </div>
 
       {/* Content */}
       <div className="max-w-2xl mx-auto">
         {error ? (
-          <div className="p-8 text-center">
+          <div className="p-8 text-center animate-fade-in-up">
             <div className="text-6xl mb-4">💥</div>
-            <h2 className="text-xl font-bold mb-2">Failed to Load Feed</h2>
-            <p className="text-zinc-400 mb-6">{error}</p>
+            <h2 className="text-xl font-bold mb-2 text-cream">Failed to Load Feed</h2>
+            <p className="text-shit-medium mb-6">{error}</p>
             <button
               onClick={() => router.refresh()}
-              className="px-6 py-3 bg-amber-700 hover:bg-amber-600 text-white font-bold rounded-xl"
+              className="px-6 py-3 bg-glass hover:bg-gold text-shit-darker font-bold rounded-xl transition-all shadow-glow"
             >
               Refresh
             </button>
           </div>
         ) : posts.length === 0 ? (
-          <div className="p-8 text-center">
-            <div className="text-6xl mb-4">🐸</div>
-            <h2 className="text-xl font-bold mb-2">No Posts Yet</h2>
-            <p className="text-zinc-400 mb-6">Be the first to post something!</p>
+          <div className="p-8 text-center animate-fade-in-up">
+            <div className="text-6xl mb-4 animate-float">🐸</div>
+            <h2 className="text-xl font-bold mb-2 text-cream">No Posts Yet</h2>
+            <p className="text-shit-medium mb-6">Be the first to post something!</p>
             {connected ? (
               <button
                 onClick={() => router.push("/")}
-                className="px-6 py-3 bg-emerald-600 hover:bg-amber-800 text-white font-bold rounded-xl"
+                className="px-6 py-3 bg-glass hover:bg-gold text-shit-darker font-bold rounded-xl transition-all shadow-glow"
               >
                 Create Post
               </button>
             ) : (
               <button
                 onClick={() => router.push("/")}
-                className="px-6 py-3 bg-emerald-600 hover:bg-amber-800 text-white font-bold rounded-xl"
+                className="px-6 py-3 bg-glass hover:bg-gold text-shit-darker font-bold rounded-xl transition-all shadow-glow"
               >
                 Connect Wallet
               </button>
