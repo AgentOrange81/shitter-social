@@ -101,21 +101,12 @@ export default function HomeFeedPage() {
             <div className="text-6xl mb-4">🐸</div>
             <h2 className="text-xl font-bold mb-2">No Posts Yet</h2>
             <p className="text-zinc-400 mb-6">Be the first to post something!</p>
-            {connected ? (
-              <button
-                onClick={() => {}}
-                className="px-6 py-3 bg-amber-800 hover:bg-amber-700 text-white font-bold rounded-xl"
-              >
-                Create Post
-              </button>
-            ) : (
-              <Link
-                href="/login"
-                className="inline-block px-6 py-3 bg-amber-800 hover:bg-amber-700 text-white font-bold rounded-xl"
-              >
-                Connect Wallet
-              </Link>
-            )}
+            <Link
+              href="/app/explore"
+              className="inline-block px-6 py-3 bg-glass hover:bg-gold text-shit-darker font-bold rounded-xl shadow-glow transition-all"
+            >
+              Explore Posts
+            </Link>
           </div>
         ) : (
           <div className="divide-y divide-zinc-800">
