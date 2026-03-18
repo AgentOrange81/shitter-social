@@ -21,8 +21,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Shitter - Social for Crypto Degens",
-  description: "The gold standard in social media for crypto degens",
+  title: "SHITTER - Social for Crypto Degens",
+  description: "The premier social platform for Solana meme coin communities. Post, engage, and connect with the degen ecosystem.",
 };
 
 export default function RootLayout({
