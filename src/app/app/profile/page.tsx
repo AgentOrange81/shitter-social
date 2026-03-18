@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function ProfilePage() {
   const { connected, publicKey } = useWallet();
@@ -11,6 +12,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     if (!session?.user?.id) return;
@@ -38,6 +40,10 @@ export default function ProfilePage() {
         if (err.name === "AbortError") return;
         if (isMounted) {
           console.error("Failed to fetch user:", err);
+          setError(true);
+          toast.error("Failed to load profile", {
+            description: "Please try again in a moment"
+          });
           setLoading(false);
         }
       });
@@ -51,14 +57,7 @@ export default function ProfilePage() {
   // Guest browsing - show public view without wallet connection
   if (!session) {
     return (
-      <div className="min-h-screen bg-shit-darker">
-        {/* Header */}
-        <div className="bg-shit-brown/10 border-b border-shit-brown/30">
-          <div className="max-w-4xl mx-auto px-4 py-4">
-            <h1 className="text-2xl font-bold text-cream">Profile</h1>
-          </div>
-        </div>
-
+      <div className="min-h-screen bg-shit-darker flex items-center justify-center">
         {/* Guest CTA */}
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="bg-shit-brown/20 border border-shit-brown/30 rounded-xl p-8 text-center shadow-lifted">
@@ -97,30 +96,55 @@ export default function ProfilePage() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-zinc-950 text-white">
-      {/* Header */}
-      <div className="bg-zinc-900 border-b border-zinc-800">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold">Profile</h1>
+  if (error) {
+    return (
+      <div className="min-h-screen bg-shit-darker flex items-center justify-center">
+        <div className="text-center animate-fade-in-up">
+          <div className="text-5xl mb-4">💥</div>
+          <h2 className="text-xl font-bold mb-2 text-cream">Failed to Load</h2>
+          <p className="text-shit-medium mb-6">Something went wrong fetching your profile</p>
+          <button
+            onClick={() => {
+              setError(false);
+              setLoading(true);
+              fetch(`/api/users/me`)
+                .then((res) => res.json())
+                .then((data) => {
+                  setUser(data);
+                  setLoading(false);
+                })
+                .catch(() => {
+                  setError(true);
+                  setLoading(false);
+                });
+            }}
+            className="px-6 py-3 bg-glass hover:bg-gold text-shit-darker font-bold rounded-xl transition-all shadow-glow"
+          >
+            Try Again
+          </button>
         </div>
       </div>
+    );
+  }
 
+  return (
+    <div className="min-h-screen bg-shit-darker">
+      {/* Header */}
       {/* Profile Content */}
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Avatar + Info */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 mb-6">
+        <div className="bg-shit-brown/20 border border-shit-brown/30 rounded-xl p-6 mb-6 shadow-lifted">
           <div className="flex items-center space-x-4">
             <div className="w-20 h-20 bg-amber-800 rounded-full flex items-center justify-center text-2xl font-bold">
               {user?.username?.charAt(0).toUpperCase() || user?.displayName?.charAt(0).toUpperCase() || session.user?.name?.charAt(0).toUpperCase() || "U"}
             </div>
             <div>
-              <h2 className="text-xl font-bold">{user?.username || user?.displayName || session.user?.name || "User"}</h2>
-              <p className="text-zinc-400 text-sm">
+              <h2 className="text-xl font-bold text-cream">{user?.username || user?.displayName || session.user?.name || "User"}</h2>
+              <p className="text-shit-medium text-sm">
                 {publicKey ? `${publicKey.toString().slice(0, 6)}...${publicKey.toString().slice(-4)}` : "Logged in"}
               </p>
               {user?.createdAt && (
-                <p className="text-zinc-500 text-xs mt-1">
+                <p className="text-shit-medium text-xs mt-1">
                   Member since {new Date(user.createdAt).toLocaleDateString()}
                 </p>
               )}
@@ -130,27 +154,27 @@ export default function ProfilePage() {
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
-            <div className="text-2xl font-bold text-amber-800">0</div>
-            <div className="text-zinc-400 text-sm">Posts</div>
+          <div className="bg-shit-brown/20 border border-shit-brown/30 rounded-xl p-4 text-center shadow-lifted">
+            <div className="text-2xl font-bold text-gold">0</div>
+            <div className="text-shit-medium text-sm">Posts</div>
           </div>
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
-            <div className="text-2xl font-bold text-amber-800">0</div>
-            <div className="text-zinc-400 text-sm">Followers</div>
+          <div className="bg-shit-brown/20 border border-shit-brown/30 rounded-xl p-4 text-center shadow-lifted">
+            <div className="text-2xl font-bold text-gold">0</div>
+            <div className="text-shit-medium text-sm">Followers</div>
           </div>
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
-            <div className="text-2xl font-bold text-amber-800">0</div>
-            <div className="text-zinc-400 text-sm">Following</div>
+          <div className="bg-shit-brown/20 border border-shit-brown/30 rounded-xl p-4 text-center shadow-lifted">
+            <div className="text-2xl font-bold text-gold">0</div>
+            <div className="text-shit-medium text-sm">Following</div>
           </div>
         </div>
 
         {/* Wallet connection CTA for users without connected wallet */}
         {!connected && (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 mb-6 text-center">
-            <p className="text-zinc-400 mb-4">Connect your wallet to enable full profile features</p>
+          <div className="bg-shit-brown/20 border border-shit-brown/30 rounded-xl p-6 mb-6 text-center shadow-lifted">
+            <p className="text-shit-medium mb-4">Connect your wallet to enable full profile features</p>
             <button
               onClick={() => router.push("/")}
-              className="px-6 py-3 bg-emerald-600 hover:bg-amber-800 text-white font-bold rounded-xl"
+              className="px-6 py-3 bg-glass hover:bg-gold text-shit-darker font-bold rounded-xl transition-all shadow-glow"
             >
               Connect Wallet
             </button>
@@ -158,11 +182,11 @@ export default function ProfilePage() {
         )}
 
         {/* Empty State */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
-          <p className="text-zinc-400 mb-4">No posts yet</p>
+        <div className="bg-shit-brown/20 border border-shit-brown/30 rounded-xl p-8 text-center shadow-lifted">
+          <p className="text-shit-medium mb-4">No posts yet</p>
           <button
             onClick={() => router.push("/")}
-            className="px-6 py-3 bg-emerald-600 hover:bg-amber-800 text-white font-bold rounded-xl"
+            className="px-6 py-3 bg-glass hover:bg-gold text-shit-darker font-bold rounded-xl transition-all shadow-glow"
           >
             Create Your First Post
           </button>

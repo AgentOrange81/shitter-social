@@ -5,6 +5,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
 
 interface Bookmark {
   id: string;
@@ -25,6 +26,7 @@ export default function BookmarksPage() {
   const router = useRouter();
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     if (!session?.user?.id) return;
@@ -47,6 +49,10 @@ export default function BookmarksPage() {
         if (err.name === "AbortError") return;
         if (isMounted) {
           console.error("Failed to fetch bookmarks:", err);
+          setError(true);
+          toast.error("Failed to load bookmarks", {
+            description: "Please try again in a moment"
+          });
           setLoading(false);
         }
       });
@@ -76,14 +82,38 @@ export default function BookmarksPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-shit-darker">
-        <div className="bg-shit-brown/10 border-b border-shit-brown/30">
-          <div className="max-w-2xl mx-auto px-4 py-4">
-            <h1 className="text-2xl font-bold text-cream">Bookmarks</h1>
-          </div>
-        </div>
-        <div className="max-w-2xl mx-auto p-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-glass"></div>
+      <div className="min-h-screen bg-shit-darker flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-glass"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-shit-darker flex items-center justify-center">
+        <div className="text-center animate-fade-in-up">
+          <div className="text-5xl mb-4">💥</div>
+          <h2 className="text-xl font-bold mb-2 text-cream">Failed to Load</h2>
+          <p className="text-shit-medium mb-6">Something went wrong fetching bookmarks</p>
+          <button
+            onClick={() => {
+              setError(false);
+              setLoading(true);
+              fetch("/api/bookmarks")
+                .then((res) => res.json())
+                .then((data) => {
+                  setBookmarks(data.bookmarks || []);
+                  setLoading(false);
+                })
+                .catch(() => {
+                  setError(true);
+                  setLoading(false);
+                });
+            }}
+            className="px-6 py-3 bg-glass hover:bg-gold text-shit-darker font-bold rounded-xl transition-all shadow-glow"
+          >
+            Try Again
+          </button>
         </div>
       </div>
     );
@@ -91,35 +121,27 @@ export default function BookmarksPage() {
 
   return (
     <div className="min-h-screen bg-shit-darker">
-      {/* Header */}
-      <div className="bg-shit-brown/10 border-b border-shit-brown/30 sticky top-0 shadow-glow">
-        <div className="max-w-2xl mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold text-cream">Bookmarks</h1>
-          <p className="text-shit-medium text-sm mt-1">Saved posts</p>
-        </div>
-      </div>
-
       {/* Content */}
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto pt-4">
         {bookmarks.length === 0 ? (
           <div className="p-8 text-center">
             <div className="text-6xl mb-4">🔖</div>
             <h2 className="text-xl font-bold mb-2">No Bookmarks</h2>
-            <p className="text-zinc-400 mb-6">Bookmark posts to save them for later</p>
+            <p className="text-shit-medium mb-6">Bookmark posts to save them for later</p>
             <button
               onClick={() => router.push("/app/explore")}
-              className="px-6 py-3 bg-emerald-600 hover:bg-amber-800 text-white font-bold rounded-xl"
+              className="px-6 py-3 bg-glass hover:bg-gold text-shit-darker font-bold rounded-xl transition-all shadow-glow"
             >
               Explore Posts
             </button>
           </div>
         ) : (
-          <div className="divide-y divide-zinc-800">
+          <div className="divide-y divide-shit-brown/30">
             {bookmarks.map((bookmark) => (
               <Link
                 key={bookmark.id}
                 href={`/app/posts/${bookmark.post.id}`}
-                className="block p-4 hover:bg-zinc-900 transition-colors"
+                className="block p-4 hover:bg-shit-brown/10 transition-colors"
               >
                 <div className="flex items-start space-x-3">
                   <div className="w-10 h-10 bg-glass rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 text-shit-darker">
@@ -130,7 +152,7 @@ export default function BookmarksPage() {
                       <span className="font-bold text-cream">
                         {bookmark.post.authorUsername || "Anonymous"}
                       </span>
-                      <span className="text-zinc-500 text-sm">
+                      <span className="text-shit-medium text-sm">
                         {new Date(bookmark.createdAt).toLocaleDateString()}
                       </span>
                     </div>

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
 
 interface Post {
   id: string;
@@ -28,6 +29,7 @@ export default function ExplorePage() {
   const router = useRouter();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -48,6 +50,10 @@ export default function ExplorePage() {
         if (err.name === "AbortError") return;
         if (isMounted) {
           console.error("Failed to fetch posts:", err);
+          setError(true);
+          toast.error("Failed to load posts", {
+            description: "Please try again in a moment"
+          });
           setLoading(false);
         }
       });
@@ -69,18 +75,41 @@ export default function ExplorePage() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-shit-darker">
-      {/* Header */}
-      <div className="bg-shit-brown/10 border-b border-shit-brown/30 sticky top-0 shadow-glow">
-        <div className="max-w-2xl mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold text-cream">Explore</h1>
-          <p className="text-shit-medium text-sm mt-1">Discover what's trending</p>
+  if (error) {
+    return (
+      <div className="min-h-screen bg-shit-darker flex items-center justify-center">
+        <div className="text-center animate-fade-in-up">
+          <div className="text-5xl mb-4">💥</div>
+          <h2 className="text-xl font-bold mb-2 text-cream">Failed to Load</h2>
+          <p className="text-shit-medium mb-6">Something went wrong fetching posts</p>
+          <button
+            onClick={() => {
+              setError(false);
+              setLoading(true);
+              fetch("/api/posts/feed")
+                .then((res) => res.json())
+                .then((data) => {
+                  setPosts(data.posts || []);
+                  setLoading(false);
+                })
+                .catch(() => {
+                  setError(true);
+                  setLoading(false);
+                });
+            }}
+            className="px-6 py-3 bg-glass hover:bg-gold text-shit-darker font-bold rounded-xl transition-all shadow-glow"
+          >
+            Try Again
+          </button>
         </div>
       </div>
+    );
+  }
 
+  return (
+    <div className="min-h-screen bg-shit-darker">
       {/* Content */}
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto pt-4">
         {posts.length === 0 ? (
           <div className="p-8 text-center animate-fade-in-up">
             <div className="text-6xl mb-4 animate-float">🐸</div>
@@ -103,12 +132,12 @@ export default function ExplorePage() {
             )}
           </div>
         ) : (
-          <div className="divide-y divide-zinc-800">
+          <div className="divide-y divide-shit-brown/30">
             {posts.map((post) => (
               <Link
                 key={post.id}
                 href={`/app/posts/${post.id}`}
-                className="block p-4 hover:bg-zinc-900 transition-colors"
+                className="block p-4 hover:bg-shit-brown/10 transition-colors"
               >
                 <div className="flex items-start space-x-3">
                   <div className="w-10 h-10 bg-amber-800 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
@@ -119,12 +148,12 @@ export default function ExplorePage() {
                       <span className="font-bold text-white">
                         {post.author?.username || post.author?.displayName || "Anonymous"}
                       </span>
-                      <span className="text-zinc-500 text-sm">
+                      <span className="text-shit-medium text-sm">
                         {new Date(post.createdAt).toLocaleDateString()}
                       </span>
                     </div>
                     <p className="text-white whitespace-pre-wrap">{post.content}</p>
-                    <div className="flex items-center space-x-6 mt-3 text-zinc-500 text-sm">
+                    <div className="flex items-center space-x-6 mt-3 text-shit-medium text-sm">
                       <span>💬 {post._count?.replies ?? 0}</span>
                       <span>🔄 {post._count?.reposts ?? 0}</span>
                       <span>❤️ {post._count?.likes ?? 0}</span>

@@ -1,29 +1,22 @@
-"use client"
+"use client";
 
-import { WalletProvider, ConnectionProvider } from "@solana/wallet-adapter-react"
-import { WalletModalProvider } from "@solana/wallet-adapter-react-ui"
-import { SolflareWalletAdapter } from "@solana/wallet-adapter-wallets"
-import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom"
-import { WalletConnectWalletAdapter } from "@solana/wallet-adapter-walletconnect"
-import { WalletAdapterNetwork } from "@solana/wallet-adapter-base"
-import { useMemo } from "react"
+import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adapter-wallets";
+import { WalletConnectWalletAdapter } from "@solana/wallet-adapter-walletconnect";
+import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+import { useMemo } from "react";
 
-const walletConnectProjectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || ""
-
-// Use adapters that work better in-browser without redirect
-const wallets = () => {
-  const list: any[] = [
-    new PhantomWalletAdapter(),
-    new SolflareWalletAdapter(),
-  ]
-  
-  // Add WalletConnect if project ID is configured
-  if (walletConnectProjectId) {
-    list.push(
+const WalletContextProvider = ({ children }: { children: React.ReactNode }) => {
+  const network = WalletAdapterNetwork.Mainnet;
+  const wallets = useMemo(
+    () => [
+      new PhantomWalletAdapter(),
+      new SolflareWalletAdapter(),
       new WalletConnectWalletAdapter({
-        network: WalletAdapterNetwork.Mainnet,
+        network,
         options: {
-          projectId: walletConnectProjectId,
+          projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || "",
           metadata: {
             name: "Shitter Social",
             description: "Social for Crypto Degens",
@@ -31,26 +24,21 @@ const wallets = () => {
             icons: ["https://social.shitter.io/favicon.ico"],
           },
         },
-      })
-    )
-  }
-  
-  return list
-}
+      }),
+    ],
+    []
+  );
 
-export function SolanaWalletProvider({ children }: { children: React.ReactNode }) {
-  const endpoint = useMemo(() => "https://api.mainnet-beta.solana.com", [])
-  const walletList = useMemo(() => wallets(), [])
+  const endpoint = "https://api.mainnet-beta.solana.com";
 
   return (
     <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={walletList} autoConnect={true}>
-        <WalletModalProvider className="!overflow-visible">
-          {children}
-        </WalletModalProvider>
+      <WalletProvider wallets={wallets} autoConnect>
+        <WalletModalProvider>{children}</WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
-  )
-}
+  );
+};
 
-export { useWallet, useConnection } from "@solana/wallet-adapter-react"
+export default WalletContextProvider;
+export { useWallet, useConnection } from "@solana/wallet-adapter-react";

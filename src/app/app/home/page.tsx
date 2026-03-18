@@ -63,12 +63,15 @@ export default function HomeFeedPage() {
     }
   }, [])
 
+  const [loadingAction, setLoadingAction] = useState<'like' | 'repost' | 'bookmark' | null>(null)
+
   const handleLike = async (postId: string) => {
     if (!connected) {
       toast.error("Connect wallet to like posts")
       return
     }
     
+    setLoadingAction('like')
     try {
       const res = await fetch(`/api/posts/${postId}/like`, { method: "POST" })
       const data = await res.json()
@@ -82,6 +85,8 @@ export default function HomeFeedPage() {
       }
     } catch (err) {
       toast.error("Failed to like post")
+    } finally {
+      setLoadingAction(null)
     }
   }
 
@@ -91,6 +96,7 @@ export default function HomeFeedPage() {
       return
     }
     
+    setLoadingAction('repost')
     try {
       const res = await fetch(`/api/posts/${postId}/repost`, { 
         method: "POST",
@@ -108,12 +114,14 @@ export default function HomeFeedPage() {
       }
     } catch (err) {
       toast.error("Failed to repost")
+    } finally {
+      setLoadingAction(null)
     }
   }
 
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
+      <div className="px-4 py-6 space-y-4">
         {[1, 2, 3].map((i) => (
           <Card key={i} className="border-shit-brown/30 bg-shit-brown/5 p-4">
             <div className="flex gap-3">
@@ -131,7 +139,7 @@ export default function HomeFeedPage() {
 
   if (error) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-12 text-center">
+      <div className="px-4 py-12 text-center">
         <div className="text-6xl mb-4 animate-float">💥</div>
         <h2 className="text-xl font-bold text-cream mb-2">Failed to Load Feed</h2>
         <p className="text-shit-medium mb-6">{error}</p>
@@ -146,7 +154,7 @@ export default function HomeFeedPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6">
+    <div className="px-4 py-6">
       {/* Compose box (only for connected users) */}
       {connected && (
         <div className="mb-6">
@@ -188,6 +196,7 @@ export default function HomeFeedPage() {
               reposts={post.reposts}
               onLike={() => handleLike(post.id)}
               onRepost={() => handleRepost(post.id)}
+              loading={loadingAction}
             />
           ))
         )}

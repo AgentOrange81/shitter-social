@@ -62,13 +62,13 @@ export default function SetPasswordPage() {
 
   if (!session) {
     return (
-      <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-shit-darker flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Not Signed In</h1>
-          <p className="text-zinc-400 mb-4">Please sign in to set your password</p>
+          <h1 className="text-2xl font-bold mb-4 text-cream">Not Signed In</h1>
+          <p className="text-shit-medium mb-4">Please sign in to set your password</p>
           <button
             onClick={() => router.push("/login")}
-            className="px-6 py-3 bg-emerald-600 hover:bg-amber-800 text-white font-bold rounded-xl"
+            className="px-6 py-3 bg-glass hover:bg-gold text-shit-darker font-bold rounded-xl transition-all shadow-glow"
           >
             Go to Login
           </button>
@@ -79,33 +79,33 @@ export default function SetPasswordPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-shit-darker flex items-center justify-center">
         <div className="text-center">
-          <div className="text-amber-800 text-6xl mb-4">✓</div>
-          <h1 className="text-2xl font-bold mb-4">Password Set!</h1>
-          <p className="text-zinc-400 mb-4">You can now log in with username and password</p>
-          <p className="text-zinc-500 text-sm">Redirecting...</p>
+          <div className="text-gold text-6xl mb-4">✓</div>
+          <h1 className="text-2xl font-bold mb-4 text-cream">Password Set!</h1>
+          <p className="text-shit-medium mb-4">You can now log in with username and password</p>
+          <p className="text-shit-medium text-sm">Redirecting...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
-      <div className="max-w-md w-full mx-4 p-8 bg-zinc-900 rounded-xl border border-zinc-800">
-        <h1 className="text-2xl font-bold text-amber-800 mb-2">Set Password</h1>
-        <p className="text-zinc-400 mb-6">Create a password for your account to enable username/password login</p>
+    <div className="min-h-screen bg-shit-darker flex items-center justify-center">
+      <div className="max-w-md w-full mx-4 p-8 bg-shit-brown/20 rounded-xl border border-shit-brown/30 shadow-lifted">
+        <h1 className="text-2xl font-bold text-gold mb-2">Set Password</h1>
+        <p className="text-shit-medium mb-6">Create a password for your account to enable username/password login</p>
 
         <form onSubmit={handleSetPassword}>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-zinc-300 mb-2">
+            <label className="block text-sm font-medium text-cream mb-2">
               Password
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-amber-800"
+              className="w-full px-4 py-3 bg-shit-brown/5 border border-shit-brown/30 rounded-lg text-cream placeholder-shit-medium focus:outline-none focus:border-glass focus:ring-1 focus:ring-glass transition-all"
               placeholder="Enter password"
               required
               minLength={8}
@@ -113,14 +113,14 @@ export default function SetPasswordPage() {
           </div>
 
           <div className="mb-6">
-            <label className="block text-sm font-medium text-zinc-300 mb-2">
+            <label className="block text-sm font-medium text-cream mb-2">
               Confirm Password
             </label>
             <input
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-amber-800"
+              className="w-full px-4 py-3 bg-shit-brown/5 border border-shit-brown/30 rounded-lg text-cream placeholder-shit-medium focus:outline-none focus:border-glass focus:ring-1 focus:ring-glass transition-all"
               placeholder="Confirm password"
               required
               minLength={8}
@@ -134,13 +134,13 @@ export default function SetPasswordPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 px-4 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-amber-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3 px-4 bg-glass hover:bg-gold text-shit-darker font-semibold rounded-lg transition-all shadow-glow disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
           >
             {isLoading ? "Setting Password..." : "Set Password"}
           </button>
         </form>
 
-        <p className="mt-6 text-xs text-zinc-500">
+        <p className="mt-6 text-xs text-shit-medium">
           Your password is securely hashed and stored. You can use it to log in from any device.
         </p>
       </div>

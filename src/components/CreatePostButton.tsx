@@ -43,13 +43,13 @@ export default function CreatePostButton() {
       {/* Modal */}
       {isOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-lg shadow-2xl">
+          <div className="bg-shit-brown/20 border border-shit-brown/30 rounded-xl w-full max-w-lg shadow-2xl">
             {/* Modal Header */}
-            <div className="flex items-center justify-between p-4 border-b border-zinc-800">
-              <h2 className="text-xl font-bold text-white">Create Post</h2>
+            <div className="flex items-center justify-between p-4 border-b border-shit-brown/30">
+              <h2 className="text-xl font-bold text-cream">Create Post</h2>
               <button
                 onClick={handleClose}
-                className="text-zinc-400 hover:text-white transition-colors"
+                className="text-shit-medium hover:text-cream transition-colors"
                 aria-label="Close"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

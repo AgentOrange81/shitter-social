@@ -26,6 +26,7 @@ interface PostCardProps {
   onRepost?: () => void
   onBookmark?: () => void
   onReply?: () => void
+  loading?: 'like' | 'repost' | 'bookmark' | null
 }
 
 export function PostCard({
@@ -42,6 +43,7 @@ export function PostCard({
   liked = false,
   reposted = false,
   bookmarked = false,
+  loading,
   onLike,
   onRepost,
   onBookmark,
@@ -75,20 +77,20 @@ export function PostCard({
             <div className="flex items-center gap-2 mb-1">
               <Link
                 href={`/app/profile/${authorUsername || 'unknown'}`}
-                className="font-bold text-cream hover:text-glass transition-colors"
+                className="font-bold text-cream/95 hover:text-glass transition-colors"
               >
                 {authorDisplayName || authorUsername || "Anonymous"}
               </Link>
               {authorUsername && (
-                <span className="text-shit-medium text-sm">@{authorUsername}</span>
+                <span className="text-shit-medium/80 text-sm">@{authorUsername}</span>
               )}
-              <span className="text-shit-medium text-sm">·</span>
-              <span className="text-shit-medium text-sm">
+              <span className="text-shit-medium/80 text-sm">·</span>
+              <span className="text-shit-medium/80 text-sm">
                 {new Date(createdAt).toLocaleDateString()}
               </span>
             </div>
 
-            <p className="text-cream whitespace-pre-wrap break-words mb-3">
+            <p className="text-cream/90 whitespace-pre-wrap break-words mb-3">
               {content}
             </p>
 
@@ -124,8 +126,13 @@ export function PostCard({
                   reposted && "text-green-400"
                 )}
                 onClick={onRepost}
+                disabled={loading === 'repost'}
               >
-                <Repeat2 className="h-4 w-4" />
+                {loading === 'repost' ? (
+                  <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-green-400" />
+                ) : (
+                  <Repeat2 className="h-4 w-4" />
+                )}
                 <span className="text-sm">{reposts > 0 ? reposts : ""}</span>
               </Button>
 
@@ -137,8 +144,13 @@ export function PostCard({
                   liked && "text-pink-400"
                 )}
                 onClick={onLike}
+                disabled={loading === 'like'}
               >
-                <Heart className={cn("h-4 w-4", liked && "fill-current")} />
+                {loading === 'like' ? (
+                  <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-pink-400" />
+                ) : (
+                  <Heart className={cn("h-4 w-4", liked && "fill-current")} />
+                )}
                 <span className="text-sm">{likes > 0 ? likes : ""}</span>
               </Button>
 
@@ -150,8 +162,13 @@ export function PostCard({
                   bookmarked && "text-glass"
                 )}
                 onClick={onBookmark}
+                disabled={loading === 'bookmark'}
               >
-                <Bookmark className={cn("h-4 w-4", bookmarked && "fill-current")} />
+                {loading === 'bookmark' ? (
+                  <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-glass" />
+                ) : (
+                  <Bookmark className={cn("h-4 w-4", bookmarked && "fill-current")} />
+                )}
               </Button>
             </div>
           </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useWallet } from "@solana/wallet-adapter-react"
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui"
 import { signIn } from "next-auth/react"
@@ -11,7 +11,12 @@ export default function LoginPage() {
   const [activeTab, setActiveTab] = useState<"wallet" | "credentials">("wallet")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [mounted, setMounted] = useState(false)
   const router = useRouter()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Credentials form state
   const [username, setUsername] = useState("")
@@ -103,6 +108,7 @@ export default function LoginPage() {
         {/* Tab selector */}
         <div className="flex mb-6 border-b border-shit-brown/30">
           <button
+            type="button"
             onClick={() => setActiveTab("wallet")}
             className={`flex-1 py-3 px-4 font-medium transition-colors ${
               activeTab === "wallet"
@@ -113,6 +119,7 @@ export default function LoginPage() {
             Wallet
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab("credentials")}
             className={`flex-1 py-3 px-4 font-medium transition-colors ${
               activeTab === "credentials"
@@ -128,11 +135,21 @@ export default function LoginPage() {
         {activeTab === "wallet" && (
           <div>
             <div className="mb-6">
-              <WalletMultiButton className="!bg-gold !text-shit-darker hover:!bg-gold-light !w-full !h-12 !text-base" />
+              <div className="text-center mb-4">
+                <p className="text-cream mb-2">
+                  {connected && publicKey 
+                    ? `Connected: ${publicKey.toString().slice(0, 4)}...${publicKey.toString().slice(-4)}`
+                    : "Click below to connect your wallet"}
+                </p>
+              </div>
+              <div className="flex justify-center">
+                {mounted && <WalletMultiButton />}
+              </div>
             </div>
 
             {connected && publicKey && (
               <button
+                type="button"
                 onClick={handleWalletSignIn}
                 disabled={isLoading}
                 className="w-full py-3 px-4 bg-glass hover:bg-gold text-shit-darker font-semibold rounded-md transition-all shadow-glow disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
@@ -141,7 +158,7 @@ export default function LoginPage() {
               </button>
             )}
 
-            <p className="mt-6 text-xs text-shit-medium">
+            <p className="mt-6 text-xs text-shit-medium text-center">
               Supported wallets: Phantom, Solflare
             </p>
           </div>

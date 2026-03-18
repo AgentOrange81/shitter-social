@@ -1,11 +1,9 @@
 "use client"
 
 import Link from "next/link"
-import { Home, Search, Bell, Mail, Bookmark, User, Menu } from "lucide-react"
+import { Home, Search, Bell, Mail, Bookmark, User } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { WalletButton } from "@/components/ui/WalletButton"
 
 const navItems = [
   { name: "Home", icon: Home, href: "/app/home" },
@@ -20,15 +18,13 @@ export function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="hidden h-screen w-64 flex-col border-r border-shit-brown/30 bg-shit-darker md:flex">
-      <div className="flex h-14 items-center px-4">
-        <Link href="/app/home" className="flex items-center gap-2 font-bold text-glass hover:text-gold transition-colors">
-          <span className="text-2xl">💩</span>
-          <span>Shitter</span>
+    <aside className="hidden h-screen w-64 flex-col border-r border-shit-brown/30 bg-shit-darker md:flex fixed top-0 left-0">
+      <div className="px-3 py-4">
+        <Link href="/app/home" className="text-2xl font-bold text-glass hover:text-glow transition-colors">
+          💩 SHITTER
         </Link>
       </div>
-
-      <nav className="flex-1 space-y-1 px-3 py-4">
+      <nav className="flex-1 space-y-1 px-3 py-2">
         {navItems.map((item) => {
           const isActive = pathname === item.href
           return (
@@ -38,7 +34,7 @@ export function Sidebar() {
               className={cn(
                 "flex items-center gap-4 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
                 isActive
-                  ? "bg-shit-brown/30 text-glass shadow-glow"
+                  ? "bg-shit-brown/30 text-glass"
                   : "text-cream hover:bg-shit-brown/20 hover:text-glass"
               )}
             >
@@ -48,18 +44,6 @@ export function Sidebar() {
           )
         })}
       </nav>
-
-      <div className="border-t border-shit-brown/30 p-4">
-        <div className="flex items-center gap-3 rounded-xl bg-shit-brown/20 p-3 border border-shit-brown/30">
-          <div className="h-10 w-10 rounded-full bg-glass text-shit-darker flex items-center justify-center font-bold">
-            JD
-          </div>
-          <div className="flex-1 overflow-hidden">
-            <div className="font-medium text-sm text-cream truncate">John Doe</div>
-            <div className="text-xs text-shit-medium truncate">@johndoe</div>
-          </div>
-        </div>
-      </div>
     </aside>
   )
 }

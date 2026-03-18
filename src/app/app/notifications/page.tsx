@@ -5,6 +5,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
 
 interface Notification {
   id: string;
@@ -27,6 +28,7 @@ export default function NotificationsPage() {
   const router = useRouter();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     if (!session?.user?.id) return;
@@ -49,6 +51,10 @@ export default function NotificationsPage() {
         if (err.name === "AbortError") return;
         if (isMounted) {
           console.error("Failed to fetch notifications:", err);
+          setError(true);
+          toast.error("Failed to load notifications", {
+            description: "Please try again in a moment"
+          });
           setLoading(false);
         }
       });
@@ -78,14 +84,38 @@ export default function NotificationsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-shit-darker">
-        <div className="bg-shit-brown/10 border-b border-shit-brown/30">
-          <div className="max-w-2xl mx-auto px-4 py-4">
-            <h1 className="text-2xl font-bold text-cream">Notifications</h1>
-          </div>
-        </div>
-        <div className="max-w-2xl mx-auto p-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-glass"></div>
+      <div className="min-h-screen bg-shit-darker flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-glass"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-shit-darker flex items-center justify-center">
+        <div className="text-center animate-fade-in-up">
+          <div className="text-5xl mb-4">💥</div>
+          <h2 className="text-xl font-bold mb-2 text-cream">Failed to Load</h2>
+          <p className="text-shit-medium mb-6">Something went wrong fetching notifications</p>
+          <button
+            onClick={() => {
+              setError(false);
+              setLoading(true);
+              fetch("/api/notifications")
+                .then((res) => res.json())
+                .then((data) => {
+                  setNotifications(data.notifications || []);
+                  setLoading(false);
+                })
+                .catch(() => {
+                  setError(true);
+                  setLoading(false);
+                });
+            }}
+            className="px-6 py-3 bg-glass hover:bg-gold text-shit-darker font-bold rounded-xl transition-all shadow-glow"
+          >
+            Try Again
+          </button>
         </div>
       </div>
     );
@@ -93,30 +123,22 @@ export default function NotificationsPage() {
 
   return (
     <div className="min-h-screen bg-shit-darker">
-      {/* Header */}
-      <div className="bg-shit-brown/10 border-b border-shit-brown/30 sticky top-0 shadow-glow">
-        <div className="max-w-2xl mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold text-cream">Notifications</h1>
-          <p className="text-shit-medium text-sm mt-1">Stay updated</p>
-        </div>
-      </div>
-
       {/* Content */}
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto pt-4">
         {notifications.length === 0 ? (
           <div className="p-8 text-center">
             <div className="text-6xl mb-4">🔔</div>
             <h2 className="text-xl font-bold mb-2">No Notifications</h2>
-            <p className="text-zinc-400">When someone likes, reposts, or follows you, they'll appear here</p>
+            <p className="text-shit-medium">When someone likes, reposts, or follows you, they'll appear here</p>
           </div>
         ) : (
-          <div className="divide-y divide-zinc-800">
+          <div className="divide-y divide-shit-brown/30">
             {notifications.map((notification) => (
               <Link
                 key={notification.id}
                 href={`/app/posts/${notification.post?.id}`}
-                className={`block p-4 hover:bg-zinc-900 transition-colors ${
-                  !notification.read ? "bg-zinc-900/50" : ""
+                className={`block p-4 hover:bg-shit-brown/10 transition-colors ${
+                  !notification.read ? "bg-shit-brown/20" : ""
                 }`}
               >
                 <div className="flex items-start space-x-3">

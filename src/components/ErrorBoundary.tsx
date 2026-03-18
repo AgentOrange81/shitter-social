@@ -32,16 +32,16 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
+        <div className="min-h-screen bg-shit-darker flex items-center justify-center">
           <div className="text-center p-8">
-            <div className="text-6xl mb-4">💥</div>
-            <h2 className="text-xl font-bold mb-2">Something went wrong</h2>
-            <p className="text-zinc-400 mb-6">
+            <div className="text-6xl mb-4 animate-float">💥</div>
+            <h2 className="text-xl font-bold mb-2 text-cream">Something went wrong</h2>
+            <p className="text-shit-medium mb-6">
               We hit an unexpected error. Try refreshing the page.
             </p>
             <button
               onClick={() => window.location.reload()}
-              className="px-6 py-3 bg-amber-700 hover:bg-amber-600 text-white font-bold rounded-xl"
+              className="px-6 py-3 bg-glass hover:bg-gold text-shit-darker font-bold rounded-xl transition-all shadow-glow"
             >
               Refresh Page
             </button>
